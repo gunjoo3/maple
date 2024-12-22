@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+<html>
+  <head>
+    
+    <meta name="theme-color" content="#1a1f28" />
+    <link rel="icon" href="ico.ico">
+    <meta name="google" content="notranslate">
+    <meta property="og:image" content="썸.JPG"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/4074b6dd70.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="./styles/style.css" />
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-storage.js"></script>
+    <title>건주 플레이리스트</title>
+    <link rel="manifest" href="/manifest.json" />
+  </head>
+  <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false" style="overflow: hidden;" onload="toast2(' ▶ 를 터치해\n음악을 재생하세요')">
+    <div class="app">
+      <h9 style="color:white; position:fixed; bottom : 5px; right:0; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; font-size:10px; z-index:100;">powered by kimgunjoo😊&nbsp;&nbsp;</h9>
+      <h8 id="toast2"></h8>
+      <nav>
+        <a href="javascript:history.back();"><button class="mdc-icon-button material-icons">arrow_back</button></a>
+        <h4>랩/힙합</h4>
+         <a href="javascript:;" class="btn-menu" id="library-link" style="z-index:1;" onclick="toast('↕ 위 아래로 스크롤')"></a>
+      </nav>
+      <div class="song-info">
+        <img
+          src="https://image.genie.co.kr/Y/IMAGE/IMG_ALBUM/080/361/494/80361494_1372644082973_1_600x600.JPG/dims/resize/Q_80,0"
+          alt=""
+        />
+        <div>
+          <h2>Airplane Mode</h2>
+          <h3>다이나믹 듀오</h3>
+        </div>
+      </div>
+      <div class="player">
+        
+        <div>
+          <input type="range" style="pointer-events: none; "/>
+          <div></div>
+        </div>
+        <span>0:00</span>
+        <span>5:00</span>
+      </div>
+      <div class="player-control">
+        <i class="fas fa-backward" id="backward"></i>
+        <i class="fas fa-play" id="play-pause"></i>
+        <i class="fas fa-forward" id="forward"></i>
+      </div>
+      <div class="sound-control" >
+        <i class="fas fa-volume-down" style="color:#adcaf2"></i>
+        <input type="range" max="100" step="1" style="color:#adcaf2"/>
+        <i class="fas fa-volume-up" style="color:#adcaf2"></i>
+      </div>
+      <audio src="./노래/1030.mp3"></audio>
+    </div>
+    <div class="library">
+      <h2 align="center" class="sticky" style="text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">재생목록</h2>
+      <div id="toast"></div>
+      <div class="library-song" id="0">
+        <img
+          src="https://image.bugsm.co.kr/album/images/original/203827/20382751.jpg?version=undefined"
+          alt=""
+        />
+        <div class="library-song-info">
+          <marquee><h3>One More Night (Feat. lIlBOI)</h3></marquee>
+          <h4>ASH ISLAND</h4>
+        </div>
+      </div>
+      <div class="library-song" id="1">
+        <img
+          src="./앨범/1.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>Stupid Dumb Lovin<br>(Feat. Cloudybay)</h3>
+          <h4>Skinny Brown</h4>
+        </div>
+      </div>
+      <div class="library-song" id="2">
+        <img
+          src="https://image.genie.co.kr/Y/IMAGE/IMG_ALBUM/080/975/127/80975127_1501825244555_1_600x600.JPG/dims/resize/Q_80,0"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>I Always</h3>
+          <h4>창모</h4>
+        </div>
+      </div>
+      <div class="library-song" id="3">
+        <img
+          src="./앨범/3.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>떠나버려 (Feat. Jhnovr)</h3>
+          <h4>한요한</h4>
+        </div>
+      </div>
+      <div class="library-song" id="4">
+        <img
+          src="./앨범/4.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>산산조각<br>(Feat. ASH ISLAND)</h3>
+          <h4>한요한</h4>
+        </div>
+      </div>
+      <div class="library-song" id="5">
+        <img
+          src="./앨범/5.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>반복</h3>
+          <h4>한요한</h4>
+        </div>
+      </div>
+      <div class="library-song" id="6">
+        <img
+          src="./앨범/6.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>걱정마</h3>
+          <h4>한요한</h4>
+        </div>
+        
+      </div>
+      <div class="library-song" id="7">
+        <img
+          src="./앨범/7.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>Fire<br>(Feat. ASH ISLAND)</h3>
+          <h4>Skinny Brown</h4>
+        </div></div>
+        <div class="library-song" id="8">
+        <img
+          src="./앨범/8.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>(Bonus Track)<br>어떡해야 돼</h3>
+          <h4>한요한</h4>
+        </div></div>
+        <div class="library-song" id="9">
+        <img
+          src="./앨범/9.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>12:00 (Feat. 스윙스 & 김승민)</h3>
+          <h4>한요한</h4>
+        </div></div>
+        <div class="library-song" id="10">
+        <img
+          src="./앨범/10.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>SOS (Feat. CHANGMO)</h3>
+          <h4>skinny brown & TOIL</h4>
+        </div></div>
+        <div class="library-song" id="11">
+        <img
+          src="./앨범/11.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+         <marquee> <h3>동서남북<br>(Feat. 최엘비 & OLNL & Kid Milli & 기리보이 & 한요한)</h3></marquee>
+          <h4>Cosmic Boy</h4>
+        </div></div>
+        <div class="library-song" id="12">
+        <img
+          src="./앨범/12.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>Paranoid</h3>
+          <h4>ASH ISLAND</h4>
+        </div></div>
+        <div class="library-song" id="13">
+        <img
+          src="./앨범/13.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>400km (Feat. Kid Milli)</h3>
+          <h4>한요한</h4>
+        </div></div>
+        <div class="library-song" id="14">
+        <img
+          src="./앨범/14.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>널 지워야해<br>(비공식 음원)</h3>
+          <h4>창모</h4>
+        </div></div>
+         <div class="library-song" id="15">
+        <img
+          src="./앨범/15.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>핑계</h3>
+          <h4>창모</h4>
+        </div></div>
+         <div class="library-song" id="16">
+        <img
+          src="./앨범/16.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>Wait For Me</h3>
+          <h4>창모</h4>
+        </div></div>
+        <div class="library-song" id="17">
+        <img
+          src="./앨범/17.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>Priority (Feat. Skinny Brown)</h3>
+          <h4>POLO</h4>
+        </div></div>
+        <div class="library-song" id="18">
+        <img
+          src="./앨범/70.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+        <marquee>  <h3>ROSE (Feat. Skinny Brown, Homeboy)</h3></marquee>
+          <h4>양홍원</h4>
+        </div></div>
+         <div class="library-song" id="19">
+        <img
+          src="./앨범/10.jpg"
+          alt=""/>
+        <div class="library-song-info">
+         <marquee> <h3>Don't Flex on me (Feat. jayci yucca, 김효은 Keem Hyo-Eun)</h3></marquee>
+          <h4>Skinny Brown</h4>
+        </div></div>
+
+        <div class="library-song" id="20">
+        <img
+          src="./앨범/72.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>Titanium</h3>
+          <h4>Skinny Brown</h4>
+        </div></div>
+        <div class="library-song" id="21">
+        <img
+          src="./앨범/72.jpg"
+          alt=""
+        />
+        <div class="library-song-info">
+          <h3>Misfits (Feat. MELOH, Kid Wine)</h3>
+          <h4>Skinny Brown</h4>
+        </div>
+      </div>
+      <div class="library-song selected" id="22">
+        <img
+          src="https://image.genie.co.kr/Y/IMAGE/IMG_ALBUM/080/361/494/80361494_1372644082973_1_600x600.JPG/dims/resize/Q_80,0"
+          alt=""
+        />
+        <div class="library-song-info"><sup style="font-size:10px; color:yellow;">(New)</sup>
+          <h3>Airplane Mode</h3>
+          <h4>다이나믹 듀오</h4>
+        </div>
+      </div>
+      
+      </div>
+      <div class="add-song" style="display:none"><i class="far fa-plus-square"></i></div>
+      
+    </div>
+    <script src="./scripts/songs.js"></script>
+    <script src="./scripts/app.js"></script>
+    <script src="./scripts/storage.js"></script>
+  </body>
+</html>
