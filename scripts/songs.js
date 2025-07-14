@@ -315,22 +315,13 @@ let songs = [
     number: "35 / 38",
   },
   {
-    name: "Sellas: Where Stars Rest",
-    cover:
-      "앨범/36.jpg",
-    artist: "셀라스 마을 (현.ver)",
-    audio: "./노래/36.mp3",
-    id: 35,
-    number: "36 / 38",
-  },
-  {
     name: "Omega Sector: For the Glory",
     cover:
       "앨범/39.jpg",
     artist: "지구방위본부대 : 격납고",
     audio: "./노래/39.mp3",
     id: 36,
-    number: "37 / 38",
+    number: "36 / 38",
   },
   {
     name: "Maple Story Login",
@@ -339,7 +330,7 @@ let songs = [
     artist: "로그인 화면 (구.ver)",
     audio: "./노래/37.mp3",
     id: 37,
-    number: "38 / 38",
+    number: "37 / 38",
   },
   
 ];
