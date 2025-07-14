@@ -338,7 +338,7 @@ let songs = [
       "앨범/100.jpg",
     artist: "엘린숲",
     audio: "./노래/100.mp3",
-    id: 38,
+    id: 100,
     number: "38 / 38",
   },
   
