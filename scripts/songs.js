@@ -335,7 +335,7 @@ let songs = [
    {
     name: "Elin Forest",
     cover:
-      "앨범/100.jpg",
+      "앨범/100.gif",
     artist: "엘린숲",
     audio: "./노래/100.mp3",
     id: 100,
