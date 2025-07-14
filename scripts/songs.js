@@ -332,5 +332,14 @@ let songs = [
     id: 37,
     number: "37 / 38",
   },
+   {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.jpg",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 38,
+    number: "38 / 38",
+  },
   
 ];
