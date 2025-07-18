@@ -355,7 +355,7 @@ let songs = [
     cover:
       "앨범/리엔.png",
     artist: "리엔필드",
-    audio: "./노래/리엔 필드.mp3",
+    audio: "./노래/리엔 필드드.mp3",
     id: 103,
     number: "40 / 61",
   },
@@ -373,7 +373,7 @@ let songs = [
     cover:
       "앨범/요정학원.png",
     artist: "요정학원 엘리넬",
-    audio: "./노래/요정학원 엘리넬_전체.mp3",
+    audio: "./노래/요정학원 엘리넬_전체.mp3",
     id: 105,
     number: "42 / 61",
   },
@@ -382,7 +382,7 @@ let songs = [
     cover:
       "앨범/천수각.png",
     artist: "세계여행마을 일본 중",
-    audio: "./노래/천수각.mp3",
+    audio: "./노래/천수각.mp3",
     id: 106,
     number: "43 / 61",
   },
@@ -391,7 +391,7 @@ let songs = [
     cover:
       "앨범/무릉.png",
     artist: "무릉도원",
-    audio: "./노래/무릉필드.mp3",
+    audio: "./노래/무릉필드.mp3",
     id: 107,
     number: "44 / 61",
   },
@@ -400,7 +400,7 @@ let songs = [
     cover:
       "앨범/무릉.png",
     artist: "무릉도원",
-    audio: "./노래/무릉마을.mp3",
+    audio: "./노래/무릉마을.mp3",
     id: 108,
     number: "45 / 61",
   },
@@ -410,7 +410,7 @@ let songs = [
     cover:
       "앨범/크리세.png",
     artist: "크리세",
-    audio: "./노래/크리세_전체.mp3",
+    audio: "./노래/크리세_전체.mp3",
     id: 109,
     number: "46 / 61",
   },
@@ -419,7 +419,7 @@ let songs = [
     cover:
       "앨범/에델슈타인.png",
     artist: "에델슈타인",
-    audio: "./노래/에델슈타인 공원.mp3",
+    audio: "./노래/에델슈타인 공원.mp3",
     id: 110,
     number: "47 / 61",
   },
@@ -428,7 +428,7 @@ let songs = [
     cover:
       "앨범/에델슈타인.png",
     artist: "에델슈타인",
-    audio: "./노래/에델슈타인 마을.mp3",
+    audio: "./노래/에델슈타인 마을.mp3",
     id: 111,
     number: "48 / 61",
   },
@@ -437,7 +437,7 @@ let songs = [
     cover:
       "앨범/에우렐.png",
     artist: "에우렐",
-    audio: "./노래/에우렐.mp3",
+    audio: "./노래/에우렐.mp3",
     id: 112,
     number: "49 / 61",
   },
@@ -446,7 +446,7 @@ let songs = [
     cover:
       "앨범/슬리피.png",
     artist: "슬리피우드 던전",
-    audio: "./노래/슬리피우드던전.mp3",
+    audio: "./노래/슬리피우드던전.mp3",
     id: 113,
     number: "50 / 61",
   },
@@ -455,7 +455,7 @@ let songs = [
     cover:
       "앨범/골드비치.png",
     artist: "골드비치",
-    audio: "./노래/골드비치.mp3",
+    audio: "./노래/골드비치.mp3",
     id: 114,
     number: "51 / 61",
   },
@@ -464,7 +464,7 @@ let songs = [
     cover:
       "앨범/엘레니아.png",
     artist: "엘레니아",
-    audio: "./노래/엘레니아필드.mp3",
+    audio: "./노래/엘리이나필드.mp3",
     id: 115,
     number: "52 / 61",
   },
@@ -473,7 +473,7 @@ let songs = [
     cover:
       "앨범/엘레니아.png",
     artist: "엘레니아",
-    audio: "./노래/엘레니아마을.mp3",
+    audio: "./노래/엘리니아마을.mp3",
     id: 116,
     number: "53 / 61",
   },
@@ -482,7 +482,7 @@ let songs = [
     cover:
       "앨범/늪지대.png",
     artist: "커닝시티",
-    audio: "./노래/늪지대.mp3",
+    audio: "./노래/늪지대.mp3",
     id: 117,
     number: "54 / 61",
   },
@@ -491,7 +491,7 @@ let songs = [
     cover:
       "앨범/헤네시스.png",
     artist: "헤네시스",
-    audio: "./노래/헤네시스_전체.mp3",
+    audio: "./노래/헤네시스_전체.mp3",
     id: 118,
     number: "55 / 61",
   },
@@ -500,7 +500,7 @@ let songs = [
     cover:
       "앨범/리스항구.png",
     artist: "리스항구",
-    audio: "./노래/리슽항구.mp3",
+    audio: "./노래/리스항구.mp3",
     id: 119,
     number: "56 / 61",
   },
@@ -509,7 +509,7 @@ let songs = [
     cover:
       "앨범/10.jpg",
     artist: "에레브",
-    audio: "./노래/에레브_전체mp3",
+    audio: "./노래/에레브_전체.mp3",
     id: 120,
     number: "57 / 61",
   },
@@ -518,7 +518,7 @@ let songs = [
     cover:
       "앨범/16.jpg",
     artist: "엘나스",
-    audio: "./노래/엘나스.mp3",
+    audio: "./노래/엘나스.mp3",
     id: 121,
     number: "58 / 61",
   },
@@ -527,7 +527,7 @@ let songs = [
     cover:
       "앨범/켄타우로스의영역.png",
     artist: "에레브",
-    audio: "./노래/켄타우로스의 영역.mp3",
+    audio: "./노래/켄타우로스의 영역.mp3",
     id: 122,
     number: "59 / 61",
   },
@@ -536,7 +536,7 @@ let songs = [
     cover:
       "앨범/루디브리엄.gif",
     artist: "루디브리엄",
-    audio: "./노래/루디브리엄.mp3",
+    audio: "./노래/루디브리엄.mp3",
     id: 123,
     number: "60 / 61",
   },
