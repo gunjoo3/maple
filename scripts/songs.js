@@ -498,7 +498,7 @@ let songs = [
       {
     name: "에레브: 전체",
     cover:
-      "앨범/10.jpg",
+      "앨범/10.JPG",
     artist: "에레브",
     audio: "./노래/에레브_전체.mp3",
     id: 120,
@@ -507,7 +507,7 @@ let songs = [
       {
     name: "엘나스: 마을",
     cover:
-      "앨범/16.jpg",
+      "앨범/16.JPG",
     artist: "엘나스",
     audio: "./노래/엘나스.mp3",
     id: 121,
