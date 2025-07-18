@@ -346,7 +346,7 @@ let songs = [
     cover:
       "앨범/25.gif",
     artist: "아리안트 필드",
-    audio: "./노래/100.mp3",
+    audio: "./노래/아리안트 필드.mp3",
     id: 102,
     number: "39 / 61",
   },
