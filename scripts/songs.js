@@ -408,7 +408,7 @@ let songs = [
   {
     name: "Pantheon Field",
     cover:
-      "앨범/59.JPG",
+      "앨범/38.JPG",
     artist: "판테온 마을",
     audio: "./노래/59.mp3",
     id: 46,
