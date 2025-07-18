@@ -355,7 +355,7 @@ let songs = [
     cover:
       "앨범/노틸러스.png",
     artist: "노틸러스",
-    audio: "./노래/노틸러스.mp3",
+    audio: "./노래/노틸러스.mp3",
     id: 104,
     number: "40 / 60",
   },
