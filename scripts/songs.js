@@ -337,7 +337,7 @@ let songs = [
     cover:
       "앨범/테라숲.png",
     artist: "테라숲",
-    audio: "./노래/테라숲.mp3",
+    audio: "./노래/101.mp3",
     id: 101,
     number: "38 / 61",
   },
