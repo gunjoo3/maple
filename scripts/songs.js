@@ -406,10 +406,10 @@ let songs = [
   },
       
       {
-    name: "그리세",
+    name: "크리세",
     cover:
       "앨범/크리세.png",
-    artist: "그리세",
+    artist: "크리세",
     audio: "./노래/크리세_전체.mp3",
     id: 109,
     number: "46 / 61",
