@@ -333,9 +333,9 @@ let songs = [
     number: "37 / 61",
   },
     {
-    name: "Teraa Forest",
+    name: "Tera Forest",
     cover:
-      "앨범/테라숲.png",
+      "앨범/테라숲.png",
     artist: "테라숲",
     audio: "./노래/101.mp3",
     id: 101,
