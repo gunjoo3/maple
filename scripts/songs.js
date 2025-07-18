@@ -323,15 +323,6 @@ let songs = [
     id: 36,
     number: "36 / 38",
   },
-  {
-    name: "Maple Story Login",
-    cover:
-      "앨범/37.gif",
-    artist: "로그인 화면 (구.ver)",
-    audio: "./노래/37.mp3",
-    id: 37,
-    number: "37 / 38",
-  },
    {
     name: "Elin Forest",
     cover:
@@ -339,6 +330,252 @@ let songs = [
     artist: "엘린숲",
     audio: "./노래/100.mp3",
     id: 100,
+    number: "37 / 38",
+  },
+
+
+  
+    {
+    name: "Teraa Forest",
+    cover:
+      "앨범/테라숲.png",
+    artist: "테라숲",
+    audio: "./노래/테라숲.mp3",
+    id: 101,
+    number: "37 / 38",
+  },
+  {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },
+      {
+    name: "Elin Forest",
+    cover:
+      "앨범/100.gif",
+    artist: "엘린숲",
+    audio: "./노래/100.mp3",
+    id: 100,
+    number: "37 / 38",
+  },  
+ {
+    name: "Maple Story Login",
+    cover:
+      "앨범/37.gif",
+    artist: "로그인 화면 (구.ver)",
+    audio: "./노래/37.mp3",
+    id: 37,
     number: "38 / 38",
   }
   
