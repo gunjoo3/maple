@@ -6,6 +6,10 @@ const libraryLink = document.getElementById("library-link");
 let librarySongs = Array.from(document.querySelectorAll(".library-song"));
 let playStatus = false;
 
+// 앨범 아트 슬라이드 타이머 핸들러
+let slideTimeout1 = null;
+let slideTimeout2 = null;
+
 libraryLink.addEventListener("click", openLibrary);
 
 function openLibrary() {
@@ -97,12 +101,43 @@ function updatePositionState() {
   }
 }
 
-function playSong(song) {
-  cover.setAttribute("src", song.cover);
+function playSong(song, direction = null) {
   name.innerText = song.name;
   artist.innerText = song.artist;
   number.innerText = song.number;
   audio.setAttribute("src", song.audio);
+
+  // 앨범 아트 슬라이드 애니메이션 처리
+  if (direction === "forward" || direction === "backward") {
+    if (slideTimeout1) clearTimeout(slideTimeout1);
+    if (slideTimeout2) clearTimeout(slideTimeout2);
+
+    // 기존 슬라이드 클래스 초기화 및 강제 리플로우
+    cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
+    void cover.offsetWidth;
+
+    const outClass = direction === "forward" ? "slide-out-left" : "slide-out-right";
+    const inClass = direction === "forward" ? "slide-in-right" : "slide-in-left";
+
+    // 1단계: 기존 커버 퇴장
+    cover.classList.add(outClass);
+
+    // 2단계: 새 커버로 교체 후 반대편에서 진입
+    slideTimeout1 = setTimeout(() => {
+      cover.setAttribute("src", song.cover);
+      cover.classList.remove(outClass);
+      cover.classList.add(inClass);
+
+      // 3단계: 애니메이션 완료 후 클래스 정리
+      slideTimeout2 = setTimeout(() => {
+        cover.classList.remove(inClass);
+      }, 220);
+    }, 180);
+  } else {
+    // 재생목록에서 직접 클릭했을 때는 슬라이드 없이 즉시 교체
+    cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
+    cover.setAttribute("src", song.cover);
+  }
 
   // OS 상태바 메타데이터 갱신
   updateMediaSession(song);
@@ -208,7 +243,7 @@ function skipSong(direction) {
     previousSong.classList.add("selected");
     songs.filter((song) => {
       if (song.id == previousSong.id) {
-        playSong(song);
+        playSong(song, "backward");
       }
     });
   } else if (direction === "forward") {
@@ -220,7 +255,7 @@ function skipSong(direction) {
     nextSong.classList.add("selected");
     songs.filter((song) => {
       if (song.id == nextSong.id) {
-        playSong(song);
+        playSong(song, "forward");
       }
     });
   }
