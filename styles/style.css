@@ -1,3 +1,7 @@
+:root {
+  --ambient-color: rgba(45, 55, 75, 0.45);
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -19,6 +23,28 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* 동적 앨범 자켓 색상 배경 글로우 */
+.ambient-bg {
+  position: fixed;
+  top: -20%;
+  left: -20%;
+  width: 140vw;
+  height: 140vh;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 38%, var(--ambient-color) 0%, rgba(26, 31, 40, 0.75) 55%, #1a1f28 85%);
+  -webkit-filter: blur(55px);
+  filter: blur(55px);
+  opacity: 0.85;
+  -webkit-transition: background 0.9s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.9s ease;
+  transition: background 0.9s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.9s ease;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  will-change: background;
 }
 
 @media screen and (max-width: 2000px) {
@@ -27,8 +53,13 @@ body {
    padding: 0 1rem;
    max-height: 100vh;
    overflow: hidden;
-   background-color: #1a1f28;
+   background-color: rgba(26, 31, 40, 0.72);
+   -webkit-backdrop-filter: blur(25px);
+   backdrop-filter: blur(25px);
    position: relative;
+   z-index: 1;
+   border-left: 1px solid rgba(255, 255, 255, 0.05);
+   border-right: 1px solid rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -38,19 +69,28 @@ body {
    padding: 0 1rem;
    max-height: 100vh;
    overflow: hidden;
-   background-color: #1a1f28;
+   background-color: rgba(26, 31, 40, 0.72);
+   -webkit-backdrop-filter: blur(25px);
+   backdrop-filter: blur(25px);
    position: relative;
+   z-index: 1;
+   border-left: 1px solid rgba(255, 255, 255, 0.05);
+   border-right: 1px solid rgba(255, 255, 255, 0.05);
   }
 }
 
 @media screen and (max-width: 700px) {
   .app {
-   width: 700px;
+   width: 100vw;
    padding: 0 1rem;
    max-height: 100vh;
    overflow: hidden;
-   background-color: #1a1f28;
+   background-color: rgba(26, 31, 40, 0.65);
+   -webkit-backdrop-filter: blur(20px);
+   backdrop-filter: blur(20px);
    position: relative;
+   z-index: 1;
+   border: none;
   }
 }
 
@@ -112,9 +152,11 @@ nav .library-opened-link {
   overflow: hidden;
   -webkit-perspective: 1000px;
   perspective: 1000px;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
-/* 앨범 아트 크기 확대(340px) 및 사파리 GPU 가속 레이어 격리 */
+/* 사파리 전용 렌더링 파이프라인 최적화 이미지 */
 .song-info img {
   width: 88%;
   max-width: 340px;
@@ -125,8 +167,7 @@ nav .library-opened-link {
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   will-change: transform, opacity;
-  -webkit-transition: -webkit-transform 0.18s ease-in, opacity 0.18s ease-in;
-  transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+  contain: paint;
 }
 
 /* 최초 1회 회전 애니메이션 종료 후 재실행 방지 */
@@ -135,84 +176,111 @@ nav .library-opened-link {
   animation: none;
 }
 
-/* 슬라이드 아웃 (사파리 3D 가속 적용) */
-.song-info img.slide-out-left {
-  -webkit-transform: translate3d(-100%, 0, 0);
-  transform: translate3d(-100%, 0, 0);
-  opacity: 0;
-  -webkit-animation: none;
-  animation: none;
-}
-
-.song-info img.slide-out-right {
-  -webkit-transform: translate3d(100%, 0, 0);
-  transform: translate3d(100%, 0, 0);
-  opacity: 0;
-  -webkit-animation: none;
-  animation: none;
-}
-
-/* 슬라이드 인 키프레임 */
-@-webkit-keyframes slideInRight {
-  from {
-    -webkit-transform: translate3d(100%, 0, 0);
-    transform: translate3d(100%, 0, 0);
+/* ===================================================
+   사파리 GPU 가속 키프레임 (Transition 경합 제거)
+=================================================== */
+@-webkit-keyframes slideOutLeft {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
     opacity: 0;
   }
-  to {
-    -webkit-transform: translate3d(0, 0, 0);
+}
+@keyframes slideOutLeft {
+  0% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+    opacity: 0;
+  }
 }
 
-@keyframes slideInRight {
-  from {
+@-webkit-keyframes slideOutRight {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
     -webkit-transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+}
+@keyframes slideOutRight {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
     transform: translate3d(100%, 0, 0);
     opacity: 0;
   }
-  to {
+}
+
+@-webkit-keyframes slideInRight {
+  0% {
+    -webkit-transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+  100% {
     -webkit-transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+@keyframes slideInRight {
+  0% {
+    transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+  100% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @-webkit-keyframes slideInLeft {
-  from {
+  0% {
     -webkit-transform: translate3d(-100%, 0, 0);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+@keyframes slideInLeft {
+  0% {
     transform: translate3d(-100%, 0, 0);
     opacity: 0;
   }
-  to {
-    -webkit-transform: translate3d(0, 0, 0);
+  100% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
-@keyframes slideInLeft {
-  from {
-    -webkit-transform: translate3d(-100%, 0, 0);
-    transform: translate3d(-100%, 0, 0);
-    opacity: 0;
-  }
-  to {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
+.song-info img.slide-out-left {
+  -webkit-animation: slideOutLeft 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: slideOutLeft 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.song-info img.slide-out-right {
+  -webkit-animation: slideOutRight 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: slideOutRight 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
 .song-info img.slide-in-right {
-  -webkit-animation: slideInRight 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  animation: slideInRight 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  -webkit-animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .song-info img.slide-in-left {
-  -webkit-animation: slideInLeft 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  animation: slideInLeft 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  -webkit-animation: slideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .song-info h2 {
@@ -439,6 +507,7 @@ nav .library-opened-link {
           transform: translateX(-100%);
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
+  z-index: 20;
 }
 
 .library h2 {
