@@ -90,6 +90,7 @@ body {
   height: 100%;
   background: -webkit-gradient(linear, left top, left bottom, from(rgba(26, 31, 40, 0.15)), color-stop(60%, rgba(26, 31, 40, 0.72)), to(#1a1f28));
   background: linear-gradient(to bottom, rgba(26, 31, 40, 0.15) 0%, rgba(26, 31, 40, 0.72) 60%, #1a1f28 100%);
+  pointer-events: none;
 }
 
 /* Nav 전체를 재생목록(.library: 20) 위인 z-index 30으로 설정 */
@@ -853,6 +854,7 @@ nav .library-opened-link {
     background: rgba(0, 0, 0, 0.712);
     color: #fff;
     z-index: 10000;
+    pointer-events: none;
 }
 
 #toast2.reveal {
