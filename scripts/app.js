@@ -308,9 +308,11 @@ function playPause() {
 
 //* sound volume control
 const volume = document.querySelector(".sound-control input");
-volume.addEventListener("change", () => {
-  audio.volume = volume.value / 100;
-});
+if (volume) {
+  volume.addEventListener("change", () => {
+    audio.volume = volume.value / 100;
+  });
+}
 
 //*defining audio and song info
 function timeFormat(time) {
@@ -458,7 +460,7 @@ forward.addEventListener("click", () => skipSong("forward"));
 audio.addEventListener("ended", () => skipSong("forward"));
 
 function skipSong(direction) {
-  const selectedSong = document.querySelector(".selected");
+  const selectedSong = document.querySelector(".library-song.selected");
   const selectedSongIndex = librarySongs.indexOf(selectedSong);
   const currentId = selectedSong ? selectedSong.id : (songs[0] && songs[0].id);
 
@@ -516,9 +518,13 @@ function skipSong(direction) {
   }
 }
 
-document.querySelector(".btn-menu").addEventListener("click", function () {
-  this.classList.toggle("active");
-});
+// 햄버거 메뉴 버튼 클릭 시 애니메이션 및 재생목록 토글 연동
+const menuBtn = document.querySelector(".btn-menu");
+if (menuBtn) {
+  menuBtn.addEventListener("click", function () {
+    this.classList.toggle("active");
+  });
+}
 
 // 마지막 재생 곡 복원 함수
 async function restoreLastPlayedSong() {
