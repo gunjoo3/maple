@@ -6,7 +6,7 @@ const libraryLink = document.getElementById("library-link");
 let librarySongs = Array.from(document.querySelectorAll(".library-song"));
 let playStatus = false;
 
-// 앨범 아트 슬라이드 타이머 핸들러
+// 앨범 아트 슬라이드 타이머 및 애니메이션 핸들러
 let slideTimeout1 = null;
 let slideTimeout2 = null;
 
@@ -19,7 +19,7 @@ const DB_VERSION = 1;
 const STORE_NAME = "audioStore";
 let currentBlobUrl = null;
 
-// 메인 화면 상시 노출 토스트 메시지 함수 (#toast2 활용)
+// 메인 화면 상시 노출 토스트 메시지 함수
 let toastTimeout = null;
 function showToast(msg) {
   const toastEl = document.getElementById("toast2") || document.getElementById("toast");
@@ -35,6 +35,57 @@ function showToast(msg) {
 }
 window.toast = showToast;
 window.toast2 = showToast;
+
+// 앨범 자켓 이미지 대표 색상 추출 및 배경 연동 (Offscreen Canvas)
+function updateAmbientColor(imageSrc) {
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.src = imageSrc;
+
+  img.onload = () => {
+    try {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      canvas.width = 24;
+      canvas.height = 24;
+      ctx.drawImage(img, 0, 0, 24, 24);
+
+      const imgData = ctx.getImageData(0, 0, 24, 24).data;
+      let r = 0, g = 0, b = 0, total = 0;
+
+      for (let i = 0; i < imgData.length; i += 4) {
+        const a = imgData[i + 3];
+        if (a > 120) {
+          r += imgData[i];
+          g += imgData[i + 1];
+          b += imgData[i + 2];
+          total++;
+        }
+      }
+
+      if (total > 0) {
+        let avgR = Math.round(r / total);
+        let avgG = Math.round(g / total);
+        let avgB = Math.round(b / total);
+
+        // 지나치게 어두운 색상은 배경 가시성을 위해 최소 밝기 보정
+        const brightness = (avgR * 299 + avgG * 587 + avgB * 114) / 1000;
+        if (brightness < 45) {
+          avgR = Math.min(255, avgR + 45);
+          avgG = Math.min(255, avgG + 45);
+          avgB = Math.min(255, avgB + 55);
+        }
+
+        document.documentElement.style.setProperty(
+          "--ambient-color",
+          `rgba(${avgR}, ${avgG}, ${avgB}, 0.5)`
+        );
+      }
+    } catch (e) {
+      console.warn("배경 색상 추출 건너뜀:", e);
+    }
+  };
+}
 
 // IndexedDB 연결
 function getDB() {
@@ -121,7 +172,7 @@ function openLibrary() {
 }
 
 librarySongs.forEach((song) => {
-  song.addEventListener("click", (e) => {
+  song.addEventListener("click", () => {
     librarySongs.forEach((otherSong) => {
       otherSong.classList.remove("selected");
     });
@@ -209,35 +260,39 @@ async function playSong(song, direction = null) {
   cover.classList.add("loaded");
   localStorage.setItem(STORAGE_KEY, song.id);
 
-  // 앨범 아트 슬라이드 애니메이션 처리 (사파리 디코딩 렉 방지 포함)
+  // 은은한 자켓 색상 배경 업데이트
+  updateAmbientColor(song.cover);
+
+  // 사파리 WebKit 렌더링 파이프라인 맞춤형 슬라이드 전환
   if (direction === "forward" || direction === "backward") {
     if (slideTimeout1) clearTimeout(slideTimeout1);
     if (slideTimeout2) clearTimeout(slideTimeout2);
 
-    cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
-    void cover.offsetWidth;
-
     const outClass = direction === "forward" ? "slide-out-left" : "slide-out-right";
     const inClass = direction === "forward" ? "slide-in-right" : "slide-in-left";
 
-    // 사파리 이미지 디코딩 렉(Stutter) 방지: 백그라운드 사전 디코딩
+    // 사파리 이미지 디코딩 렉(Stutter) 방지: 비동기 사전 디코딩
     const preloadImg = new Image();
     preloadImg.src = song.cover;
     if (preloadImg.decode) {
-      preloadImg.decode().catch(() => {});
+      await preloadImg.decode().catch(() => {});
     }
 
-    cover.classList.add(outClass);
+    cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
 
-    slideTimeout1 = setTimeout(() => {
-      cover.setAttribute("src", song.cover);
-      cover.classList.remove(outClass);
-      cover.classList.add(inClass);
+    requestAnimationFrame(() => {
+      cover.classList.add(outClass);
 
-      slideTimeout2 = setTimeout(() => {
-        cover.classList.remove(inClass);
-      }, 220);
-    }, 180);
+      slideTimeout1 = setTimeout(() => {
+        cover.setAttribute("src", song.cover);
+        cover.classList.remove(outClass);
+        cover.classList.add(inClass);
+
+        slideTimeout2 = setTimeout(() => {
+          cover.classList.remove(inClass);
+        }, 220);
+      }, 180);
+    });
   } else {
     cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
     cover.setAttribute("src", song.cover);
@@ -514,6 +569,9 @@ async function restoreLastPlayedSong() {
   name.innerText = targetSong.name;
   artist.innerText = targetSong.artist;
   number.innerText = targetSong.number;
+
+  // 초기 로딩 시 자켓 색상 즉시 추출 및 배경 설정
+  updateAmbientColor(targetSong.cover);
 
   await setAudioSource(targetSong);
 
