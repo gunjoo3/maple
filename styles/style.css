@@ -93,7 +93,7 @@ nav .library-opened-link {
   border-color: #120f2e;
 }
 
-/* 앨범 정보 및 메인 컨테이너 */
+/* 앨범 정보 컨테이너 */
 .song-info {
   min-height: 60vh;
   display: -webkit-box;
@@ -131,15 +131,16 @@ nav .library-opened-link {
   perspective: 1000px;
 }
 
-/* 전면 메인 앨범 아트 (모서리 라운딩 및 스포티파이 음영 분리) */
+/* 메인 앨범 아트: 미세 광택 보더 및 깊이감 있는 섀도우 */
 .song-info .main-cover {
   position: relative;
   z-index: 2;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.48);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), 0 22px 48px rgba(0, 0, 0, 0.38);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-transform: translate3d(0, 0, 0);
@@ -148,20 +149,21 @@ nav .library-opened-link {
   contain: paint;
 }
 
-/* 스포티파이 스타일 은은한 와이드 백라이트 (Glow) */
+/* 감성 앰비언트 글로우: 사각 테두리를 원형 페이드 마스크로 제거 */
 .song-info .album-glow {
   position: absolute;
-  top: 6%;
-  left: -5%;
-  width: 110%;
-  height: 110%;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
   object-fit: cover;
-  border-radius: 20px;
   z-index: 1;
-  -webkit-filter: blur(48px) saturate(1.25) brightness(0.92);
-  filter: blur(48px) saturate(1.25) brightness(0.92);
-  opacity: 0.5;
+  -webkit-filter: blur(65px) saturate(1.2) brightness(0.85);
+  filter: blur(65px) saturate(1.2) brightness(0.85);
+  opacity: 0.38;
   pointer-events: none;
+  -webkit-mask-image: radial-gradient(circle at center, black 32%, transparent 72%);
+  mask-image: radial-gradient(circle at center, black 32%, transparent 72%);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-transform: translate3d(0, 0, 0);
@@ -265,7 +267,6 @@ nav .library-opened-link {
   }
 }
 
-/* 자켓과 백라이트가 동시에 동일 궤적으로 부드럽게 이동 */
 .song-info .main-cover.slide-out-left,
 .song-info .album-glow.slide-out-left {
   -webkit-animation: slideOutLeft 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
