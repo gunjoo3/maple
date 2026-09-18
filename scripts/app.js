@@ -13,6 +13,11 @@ let slideTimeout2 = null;
 // 로컬 스토리지 키
 const STORAGE_KEY = "maple_last_song_id";
 
+// 첫 진입 시의 회전 애니메이션이 1회 끝나면 .loaded 클래스를 붙여 재실행 방지
+cover.addEventListener("animationend", () => {
+  cover.classList.add("loaded");
+}, { once: true });
+
 libraryLink.addEventListener("click", openLibrary);
 
 function openLibrary() {
@@ -109,6 +114,9 @@ function playSong(song, direction = null) {
   artist.innerText = song.artist;
   number.innerText = song.number;
   audio.setAttribute("src", song.audio);
+
+  // 곡을 넘기면 초기 회전 애니메이션 비활성화 확정
+  cover.classList.add("loaded");
 
   // 현재 선택된 곡 ID를 로컬 스토리지에 영구 저장
   localStorage.setItem(STORAGE_KEY, song.id);
@@ -270,14 +278,12 @@ function restoreLastPlayedSong() {
   const savedSongId = localStorage.getItem(STORAGE_KEY);
   const targetSong = (savedSongId && songs.find((s) => s.id == savedSongId)) || songs[0];
 
-  // 1. 메인 플레이어 정보 세팅
   cover.setAttribute("src", targetSong.cover);
   name.innerText = targetSong.name;
   artist.innerText = targetSong.artist;
   number.innerText = targetSong.number;
   audio.setAttribute("src", targetSong.audio);
 
-  // 2. 재생목록(Library) 선택 상태 동기화
   librarySongs.forEach((songEl) => {
     songEl.classList.remove("selected");
     if (songEl.id == targetSong.id) {
@@ -285,7 +291,6 @@ function restoreLastPlayedSong() {
     }
   });
 
-  // 3. OS 잠금화면 메타데이터 동기화
   updateMediaSession(targetSong);
 }
 
