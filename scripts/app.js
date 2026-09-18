@@ -10,6 +10,9 @@ let playStatus = false;
 let slideTimeout1 = null;
 let slideTimeout2 = null;
 
+// 로컬 스토리지 키
+const STORAGE_KEY = "maple_last_song_id";
+
 libraryLink.addEventListener("click", openLibrary);
 
 function openLibrary() {
@@ -27,8 +30,8 @@ librarySongs.forEach((song) => {
     librarySongs.forEach((otherSong) => {
       otherSong.classList.remove("selected");
     });
-    e.target.classList.add("selected");
-    songId = song.id;
+    song.classList.add("selected");
+    
     songs.filter((selectedSong) => {
       if (selectedSong.id == song.id) {
         playSong(selectedSong);
@@ -107,34 +110,32 @@ function playSong(song, direction = null) {
   number.innerText = song.number;
   audio.setAttribute("src", song.audio);
 
+  // 현재 선택된 곡 ID를 로컬 스토리지에 영구 저장
+  localStorage.setItem(STORAGE_KEY, song.id);
+
   // 앨범 아트 슬라이드 애니메이션 처리
   if (direction === "forward" || direction === "backward") {
     if (slideTimeout1) clearTimeout(slideTimeout1);
     if (slideTimeout2) clearTimeout(slideTimeout2);
 
-    // 기존 슬라이드 클래스 초기화 및 강제 리플로우
     cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
     void cover.offsetWidth;
 
     const outClass = direction === "forward" ? "slide-out-left" : "slide-out-right";
     const inClass = direction === "forward" ? "slide-in-right" : "slide-in-left";
 
-    // 1단계: 기존 커버 퇴장
     cover.classList.add(outClass);
 
-    // 2단계: 새 커버로 교체 후 반대편에서 진입
     slideTimeout1 = setTimeout(() => {
       cover.setAttribute("src", song.cover);
       cover.classList.remove(outClass);
       cover.classList.add(inClass);
 
-      // 3단계: 애니메이션 완료 후 클래스 정리
       slideTimeout2 = setTimeout(() => {
         cover.classList.remove(inClass);
       }, 220);
     }, 180);
   } else {
-    // 재생목록에서 직접 클릭했을 때는 슬라이드 없이 즉시 교체
     cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
     cover.setAttribute("src", song.cover);
   }
@@ -147,7 +148,6 @@ function playSong(song, direction = null) {
 }
 
 //*player control actions
-//play||pause action
 const playPauseIcon = document.getElementById("play-pause");
 
 playPauseIcon.addEventListener("click", () => {
@@ -156,9 +156,8 @@ playPauseIcon.addEventListener("click", () => {
 
 function playPause() {
   if (playStatus === false) {
-    // 첫 곡에서 바로 재생 버튼을 눌렀을 때도 현재 선택된 1번 곡을 상태바에 즉시 등록
     const selectedSongEl = document.querySelector(".library-song.selected");
-    const targetId = selectedSongEl ? selectedSongEl.id : 1;
+    const targetId = selectedSongEl ? selectedSongEl.id : (songs[0] && songs[0].id);
     const currentSongData = (typeof songs !== "undefined" && songs.find((s) => s.id == targetId)) || (typeof songs !== "undefined" && songs[0]);
     
     if (currentSongData) {
@@ -192,7 +191,6 @@ volume.addEventListener("change", () => {
 });
 
 //*defining audio and song info
-//format current/duration time
 function timeFormat(time) {
   return Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
 }
@@ -265,7 +263,31 @@ document.querySelector(".btn-menu").addEventListener("click", function () {
   this.classList.toggle("active");
 });
 
-// 페이지 초기 로드 시 1번 곡 메타데이터 사전 동기화
-if (typeof songs !== "undefined" && songs.length > 0) {
-  updateMediaSession(songs[0]);
+// 마지막 재생 곡 복원 함수
+function restoreLastPlayedSong() {
+  if (typeof songs === "undefined" || songs.length === 0) return;
+
+  const savedSongId = localStorage.getItem(STORAGE_KEY);
+  const targetSong = (savedSongId && songs.find((s) => s.id == savedSongId)) || songs[0];
+
+  // 1. 메인 플레이어 정보 세팅
+  cover.setAttribute("src", targetSong.cover);
+  name.innerText = targetSong.name;
+  artist.innerText = targetSong.artist;
+  number.innerText = targetSong.number;
+  audio.setAttribute("src", targetSong.audio);
+
+  // 2. 재생목록(Library) 선택 상태 동기화
+  librarySongs.forEach((songEl) => {
+    songEl.classList.remove("selected");
+    if (songEl.id == targetSong.id) {
+      songEl.classList.add("selected");
+    }
+  });
+
+  // 3. OS 잠금화면 메타데이터 동기화
+  updateMediaSession(targetSong);
 }
+
+// 페이지 진입 시 마지막 곡 즉시 복원
+restoreLastPlayedSong();
