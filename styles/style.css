@@ -280,7 +280,7 @@ nav .library-opened-link {
   font-size: 0.8rem;
 }
 
-/* 컨트롤러 (5개 아이콘 균형 배치) */
+/* 컨트롤러 */
 .player-control {
   min-height: 10vh;
   display: -webkit-box;
@@ -301,7 +301,6 @@ nav .library-opened-link {
   transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
-/* 보조 기능 아이콘 (타이머, 셔플) 기본 및 활성화 스타일 */
 #timer-btn, #shuffle-btn {
   font-size: 1.05rem;
   opacity: 0.55;
@@ -316,6 +315,25 @@ nav .library-opened-link {
   color: #ff9966;
   transform: scale(1.15);
   text-shadow: 0 0 10px rgba(255, 153, 102, 0.7);
+}
+
+/* 일시정지 아래 실시간 타이머 텍스트 스타일 */
+#timer-display {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #ff9966;
+  font-weight: 600;
+  letter-spacing: 1px;
+  min-height: 1rem;
+  margin-top: -0.6rem;
+  margin-bottom: 0.3rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+#timer-display.active {
+  opacity: 0.9;
 }
 
 .sound-control {
