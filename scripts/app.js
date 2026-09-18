@@ -13,6 +13,77 @@ let slideTimeout2 = null;
 // 로컬 스토리지 키
 const STORAGE_KEY = "maple_last_song_id";
 
+// IndexedDB 설정
+const DB_NAME = "MapleAudioCacheDB";
+const DB_VERSION = 1;
+const STORE_NAME = "audioStore";
+let currentBlobUrl = null; // 메모리 관리를 위한 현재 Blob URL
+
+// IndexedDB 연결
+function getDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "id" });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+// IndexedDB에서 캐시된 음원 가져오기
+async function getCachedAudio(id) {
+  try {
+    const db = await getDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const store = tx.objectStore(STORE_NAME);
+      const request = store.get(id);
+      request.onsuccess = () => resolve(request.result ? request.result.blob : null);
+      request.onerror = () => resolve(null);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
+// 백그라운드에서 음원을 다운로드하여 IndexedDB에 저장
+async function cacheAudio(id, url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return;
+    const blob = await response.blob();
+    const db = await getDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+    store.put({ id: id, blob: blob });
+  } catch (e) {
+    console.log("음원 로컬 캐싱 실패:", e);
+  }
+}
+
+// 음원 소스 세팅 (캐시가 있으면 Blob URL로 즉시 세팅, 없으면 원본 주소로 세팅 후 캐싱)
+async function setAudioSource(song) {
+  // 이전 할당된 메모리 해제
+  if (currentBlobUrl) {
+    URL.revokeObjectURL(currentBlobUrl);
+    currentBlobUrl = null;
+  }
+
+  const cachedBlob = await getCachedAudio(song.id);
+  if (cachedBlob) {
+    currentBlobUrl = URL.createObjectURL(cachedBlob);
+    audio.src = currentBlobUrl;
+  } else {
+    audio.src = song.audio;
+    // 백그라운드 비동기 캐싱 진행 (재생 차단 방지)
+    cacheAudio(song.id, song.audio);
+  }
+}
+
 // 첫 진입 시의 회전 애니메이션이 1회 끝나면 .loaded 클래스를 붙여 재실행 방지
 cover.addEventListener("animationend", () => {
   cover.classList.add("loaded");
@@ -109,16 +180,12 @@ function updatePositionState() {
   }
 }
 
-function playSong(song, direction = null) {
+async function playSong(song, direction = null) {
   name.innerText = song.name;
   artist.innerText = song.artist;
   number.innerText = song.number;
-  audio.setAttribute("src", song.audio);
 
-  // 곡을 넘기면 초기 회전 애니메이션 비활성화 확정
   cover.classList.add("loaded");
-
-  // 현재 선택된 곡 ID를 로컬 스토리지에 영구 저장
   localStorage.setItem(STORAGE_KEY, song.id);
 
   // 앨범 아트 슬라이드 애니메이션 처리
@@ -148,7 +215,9 @@ function playSong(song, direction = null) {
     cover.setAttribute("src", song.cover);
   }
 
-  // OS 상태바 메타데이터 갱신
+  // 로컬 DB에서 캐시된 음원 로딩 (캐시가 없을 시 원본 로드 후 자동 캐싱)
+  await setAudioSource(song);
+
   updateMediaSession(song);
 
   playStatus = false;
@@ -272,7 +341,7 @@ document.querySelector(".btn-menu").addEventListener("click", function () {
 });
 
 // 마지막 재생 곡 복원 함수
-function restoreLastPlayedSong() {
+async function restoreLastPlayedSong() {
   if (typeof songs === "undefined" || songs.length === 0) return;
 
   const savedSongId = localStorage.getItem(STORAGE_KEY);
@@ -282,7 +351,9 @@ function restoreLastPlayedSong() {
   name.innerText = targetSong.name;
   artist.innerText = targetSong.artist;
   number.innerText = targetSong.number;
-  audio.setAttribute("src", targetSong.audio);
+
+  // 캐시된 음원 복원 및 세팅
+  await setAudioSource(targetSong);
 
   librarySongs.forEach((songEl) => {
     songEl.classList.remove("selected");
