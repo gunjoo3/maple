@@ -68,6 +68,8 @@ nav {
   padding: 10px;
   padding-top: 0px;
   font-size: 1.2rem;
+  position: relative;
+  z-index: 5;
 }
 
 nav span:last-child {
@@ -93,7 +95,7 @@ nav .library-opened-link {
   border-color: #120f2e;
 }
 
-/* 앨범 정보 컨테이너 */
+/* 앨범 정보 컨테이너 (빛이 상하 영역으로 부드럽게 퍼질 수 있도록 오버플로우 개방) */
 .song-info {
   min-height: 60vh;
   display: -webkit-box;
@@ -109,7 +111,7 @@ nav .library-opened-link {
   -webkit-box-pack: space-evenly;
       -ms-flex-pack: space-evenly;
           justify-content: space-evenly;
-  overflow: hidden;
+  position: relative;
 }
 
 /* 자켓 + 백라이트 감싸는 래퍼 */
@@ -131,7 +133,7 @@ nav .library-opened-link {
   perspective: 1000px;
 }
 
-/* 메인 앨범 아트: 미세 광택 보더 및 깊이감 있는 섀도우 */
+/* 메인 앨범 아트: 깊이감 있는 섀도우 및 섬세한 글래스 엣지 */
 .song-info .main-cover {
   position: relative;
   z-index: 2;
@@ -139,8 +141,8 @@ nav .library-opened-link {
   height: 100%;
   object-fit: contain;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), 0 22px 48px rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.52), 0 28px 60px rgba(0, 0, 0, 0.42);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-transform: translate3d(0, 0, 0);
@@ -149,21 +151,22 @@ nav .library-opened-link {
   contain: paint;
 }
 
-/* 감성 앰비언트 글로우: 사각 테두리를 원형 페이드 마스크로 제거 */
+/* 초광대역 앰비언트 글로우: 배경 전반으로 물들 듯 퍼지는 오로라 조명 */
 .song-info .album-glow {
   position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 120%;
-  height: 120%;
+  top: -65%;
+  left: -65%;
+  width: 230%;
+  height: 230%;
   object-fit: cover;
+  border-radius: 50%;
   z-index: 1;
-  -webkit-filter: blur(65px) saturate(1.2) brightness(0.85);
-  filter: blur(65px) saturate(1.2) brightness(0.85);
-  opacity: 0.38;
+  -webkit-filter: blur(95px) saturate(1.35) brightness(0.88);
+  filter: blur(95px) saturate(1.35) brightness(0.88);
+  opacity: 0.42;
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(circle at center, black 32%, transparent 72%);
-  mask-image: radial-gradient(circle at center, black 32%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0.6) 60%, transparent 82%);
+  mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0.6) 60%, transparent 82%);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-transform: translate3d(0, 0, 0);
@@ -173,7 +176,7 @@ nav .library-opened-link {
   animation: none;
 }
 
-/* 회전 애니메이션 종료 후 정지 */
+/* 회전 애니메이션 종료 후 재실행 방지 */
 .song-info .main-cover.loaded,
 .song-info .album-glow.loaded {
   -webkit-animation: none;
@@ -267,6 +270,7 @@ nav .library-opened-link {
   }
 }
 
+/* 자켓과 백라이트가 동시에 동일 궤적으로 이동 */
 .song-info .main-cover.slide-out-left,
 .song-info .album-glow.slide-out-left {
   -webkit-animation: slideOutLeft 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
@@ -298,6 +302,8 @@ nav .library-opened-link {
   -webkit-background-clip: text;
   background-clip: text;
   margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 3;
 }
 
 .song-info h2,
@@ -308,6 +314,8 @@ nav .library-opened-link {
 
 .song-info h3 {
   font-size: 0.8rem;
+  position: relative;
+  z-index: 3;
 }
 
 @-webkit-keyframes playRotate {
@@ -343,6 +351,8 @@ nav .library-opened-link {
       flex-wrap: wrap;
   width: 90%;
   margin: auto;
+  position: relative;
+  z-index: 5;
 }
 
 .player div {
@@ -413,6 +423,8 @@ nav .library-opened-link {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  position: relative;
+  z-index: 5;
 }
 
 .player-control i {
@@ -451,6 +463,8 @@ nav .library-opened-link {
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
+  position: relative;
+  z-index: 5;
 }
 
 #timer-display.active {
@@ -470,6 +484,8 @@ nav .library-opened-link {
           justify-content: space-between;
   margin: 0.2rem auto;
   width: 60%;
+  position: relative;
+  z-index: 5;
 }
 
 .sound-control input {
@@ -515,6 +531,7 @@ nav .library-opened-link {
           transform: translateX(-100%);
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
+  z-index: 20;
 }
 
 .library h2 {
