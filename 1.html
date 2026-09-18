@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-<html>
+<html lang="ko">
   <head>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -37,12 +36,12 @@
         <img id="ambient-backdrop-img" src="앨범/100.gif" alt="" />
       </div>
 
-      <h9 style="color:white; position:fixed; bottom : 5px; right:0; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; font-size:10px; z-index:100;">powered by kgj😊&nbsp;&nbsp;</h9>
-      <h8 id="toast2"></h8>
+      <h9 style="color:white; position:fixed; bottom : 5px; right:0; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; font-size:10px; z-index:100; pointer-events: none;">powered by kgj😊&nbsp;&nbsp;</h9>
+      <div id="toast2"></div>
       <nav>
         <a href="javascript:history.back();"><button class="mdc-icon-button material-icons">arrow_back</button></a>
         <h4>메이플스토리 BGM</h4>
-        <!-- 재생목록 창(z-index: 20) 위로 올라오도록 z-index 수정 -->
+        <!-- 재생목록 창(z-index: 20) 위로 올라오도록 z-index 설정 -->
         <a href="javascript:;" class="btn-menu" id="library-link" style="z-index:30;" onclick="toast('↕ 위 아래로 스크롤')"></a>
       </nav>
       <div class="song-info">
@@ -53,7 +52,7 @@
         <div>
           <h2>Elin Forest</h2>
           <h3>엘린숲</h3>
-          <h5 STYLE="text-align: center">1 / 61</h5>
+          <h5 style="text-align: center">1 / 61</h5>
         </div>
       </div>
       <div class="player">
@@ -73,13 +72,9 @@
       </div>
       <!-- 일시정지 바로 아래 실시간 타이머 표시 영역 -->
       <div id="timer-display"></div>
-      <!--<div class="sound-control">
-        <i class="fas fa-volume-down" style="color:#adcaf2"></i>
-        <input type="range" max="100" step="1" style="color:#adcaf2"/>
-        <i class="fas fa-volume-up" style="color:#adcaf2"></i>
-      </div>-->
       <audio src="./노래/100.mp3"></audio>
     </div>
+
     <div class="library">
       <h2 align="center" class="sticky" style="text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">재생목록</h2>
       <div id="toast"></div>
@@ -571,10 +566,9 @@
           <h4>로그인 화면 (구.ver)</h4>
         </div>
       </div>
-    
-      </div>
       <div class="add-song" style="display:none"><i class="far fa-plus-square"></i></div>
     </div>
+
     <script src="./scripts/songs.js"></script>
     <script src="./scripts/app.js"></script>
     <script src="./scripts/storage.js"></script>
