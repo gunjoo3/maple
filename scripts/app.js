@@ -19,17 +19,22 @@ const DB_VERSION = 1;
 const STORE_NAME = "audioStore";
 let currentBlobUrl = null;
 
-// 토스트 메시지 출력 함수
+// 메인 화면 상시 노출 토스트 메시지 함수 (#toast2 활용)
+let toastTimeout = null;
 function showToast(msg) {
-  const toastEl = document.getElementById("toast");
+  const toastEl = document.getElementById("toast2") || document.getElementById("toast");
   if (!toastEl) return;
+  
   toastEl.innerText = msg;
   toastEl.classList.add("reveal");
-  setTimeout(() => {
+  
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
     toastEl.classList.remove("reveal");
-  }, 2000);
+  }, 2200);
 }
-window.toast = window.toast || showToast;
+window.toast = showToast;
+window.toast2 = showToast;
 
 // IndexedDB 연결
 function getDB() {
@@ -108,6 +113,11 @@ function openLibrary() {
   } else {
     library.classList.add("library-opened");
     libraryLink.classList.add("library-opened-link");
+    // 서랍 열릴 때 현재 곡으로 자동 스크롤
+    const currentSelected = document.querySelector(".library-song.selected");
+    if (currentSelected) {
+      currentSelected.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }
 }
 
@@ -117,9 +127,11 @@ librarySongs.forEach((song) => {
       otherSong.classList.remove("selected");
     });
     song.classList.add("selected");
+    song.scrollIntoView({ behavior: "smooth", block: "center" });
     
     songs.filter((selectedSong) => {
       if (selectedSong.id == song.id) {
+        removeFromShuffleQueue(selectedSong.id);
         playSong(selectedSong);
       }
     });
@@ -307,72 +319,42 @@ durationInput.addEventListener("change", () => {
   updatePositionState();
 });
 
-//*skipping back/forward
-const back = document.getElementById("backward");
-const forward = document.getElementById("forward");
-back.addEventListener("click", () => skipSong("backward"));
-forward.addEventListener("click", () => skipSong("forward"));
+//* 셔플(중복 없는 덱 셔플) 큐 관리
+let isShuffle = false;
+let shuffleQueue = [];
+const shuffleBtn = document.getElementById("shuffle-btn");
 
-audio.addEventListener("ended", () => skipSong("forward"));
-
-function skipSong(direction) {
-  const selectedSong = document.querySelector(".selected");
-  const selectedSongIndex = librarySongs.indexOf(selectedSong);
-
-  selectedSong.classList.remove("selected");
-
-  // 셔플 활성화 상태에서 '다음 곡' 또는 '곡 자동 종료' 시 랜덤 재생
-  if (direction === "forward" && isShuffle && typeof songs !== "undefined" && songs.length > 1) {
-    let randomIndex;
-    do {
-      randomIndex = Math.floor(Math.random() * librarySongs.length);
-    } while (randomIndex === selectedSongIndex);
-
-    const randomSongEl = librarySongs[randomIndex];
-    randomSongEl.classList.add("selected");
-
-    const targetSong = songs.find((s) => s.id == randomSongEl.id);
-    if (targetSong) {
-      playSong(targetSong, "forward");
-    }
-    return;
+function buildShuffleQueue(currentId) {
+  const pool = songs.map((s) => s.id).filter((id) => id != currentId);
+  // Fisher-Yates 알고리즘
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
   }
-
-  // 순차 재생
-  if (direction === "backward") {
-    let previousSong = librarySongs[selectedSongIndex - 1];
-    if (librarySongs.indexOf(previousSong) === -1) {
-      previousSong = librarySongs[librarySongs.length - 1];
-    }
-    previousSong.classList.add("selected");
-    songs.filter((song) => {
-      if (song.id == previousSong.id) {
-        playSong(song, "backward");
-      }
-    });
-  } else if (direction === "forward") {
-    let nextSong = librarySongs[selectedSongIndex + 1];
-    if (librarySongs.indexOf(nextSong) === -1) {
-      nextSong = librarySongs[0];
-    }
-    nextSong.classList.add("selected");
-    songs.filter((song) => {
-      if (song.id == nextSong.id) {
-        playSong(song, "forward");
-      }
-    });
-  }
+  return pool;
 }
 
-//* 셔플(랜덤 재생) 설정
-let isShuffle = false;
-const shuffleBtn = document.getElementById("shuffle-btn");
+function removeFromShuffleQueue(id) {
+  const idx = shuffleQueue.indexOf(Number(id));
+  if (idx !== -1) {
+    shuffleQueue.splice(idx, 1);
+  }
+}
 
 if (shuffleBtn) {
   shuffleBtn.addEventListener("click", () => {
     isShuffle = !isShuffle;
     shuffleBtn.classList.toggle("active", isShuffle);
-    showToast(isShuffle ? "셔플 재생 ON" : "셔플 재생 OFF");
+
+    if (isShuffle) {
+      const selectedSong = document.querySelector(".library-song.selected");
+      const currentId = selectedSong ? selectedSong.id : (songs[0] && songs[0].id);
+      shuffleQueue = buildShuffleQueue(currentId);
+      showToast("셔플 재생 ON");
+    } else {
+      shuffleQueue = [];
+      showToast("셔플 재생 OFF");
+    }
   });
 }
 
@@ -409,6 +391,76 @@ if (timerBtn) {
       showToast("타이머 해제");
     }
   });
+}
+
+//*skipping back/forward
+const back = document.getElementById("backward");
+const forward = document.getElementById("forward");
+back.addEventListener("click", () => skipSong("backward"));
+forward.addEventListener("click", () => skipSong("forward"));
+
+audio.addEventListener("ended", () => skipSong("forward"));
+
+function skipSong(direction) {
+  const selectedSong = document.querySelector(".library-song.selected");
+  const selectedSongIndex = librarySongs.indexOf(selectedSong);
+  const currentId = selectedSong ? selectedSong.id : (songs[0] && songs[0].id);
+
+  // 셔플이 활성화된 상태에서 '다음 곡' 또는 '곡 종료 후 자동 넘김'
+  if (direction === "forward" && isShuffle && typeof songs !== "undefined" && songs.length > 1) {
+    if (shuffleQueue.length === 0) {
+      shuffleQueue = buildShuffleQueue(currentId);
+    }
+
+    const nextId = shuffleQueue.shift();
+    const nextSongEl = document.getElementById(String(nextId));
+
+    librarySongs.forEach((s) => s.classList.remove("selected"));
+    if (nextSongEl) {
+      nextSongEl.classList.add("selected");
+      // 재생목록 스크롤 자동 동기화
+      nextSongEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    const targetSong = songs.find((s) => s.id == nextId);
+    if (targetSong) {
+      playSong(targetSong, "forward");
+    }
+    return;
+  }
+
+  // 일반 순차 재생
+  librarySongs.forEach((s) => s.classList.remove("selected"));
+
+  if (direction === "backward") {
+    let previousSong = librarySongs[selectedSongIndex - 1];
+    if (!previousSong) {
+      previousSong = librarySongs[librarySongs.length - 1];
+    }
+    previousSong.classList.add("selected");
+    previousSong.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    songs.filter((song) => {
+      if (song.id == previousSong.id) {
+        removeFromShuffleQueue(song.id);
+        playSong(song, "backward");
+      }
+    });
+  } else if (direction === "forward") {
+    let nextSong = librarySongs[selectedSongIndex + 1];
+    if (!nextSong) {
+      nextSong = librarySongs[0];
+    }
+    nextSong.classList.add("selected");
+    nextSong.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    songs.filter((song) => {
+      if (song.id == nextSong.id) {
+        removeFromShuffleQueue(song.id);
+        playSong(song, "forward");
+      }
+    });
+  }
 }
 
 document.querySelector(".btn-menu").addEventListener("click", function () {
