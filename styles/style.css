@@ -92,6 +92,7 @@ body {
   background: linear-gradient(to bottom, rgba(26, 31, 40, 0.15) 0%, rgba(26, 31, 40, 0.72) 60%, #1a1f28 100%);
 }
 
+/* 재생목록(.library: 20)보다 위에 배치하여 버튼이 덮이지 않도록 z-index 30 적용 */
 nav {
   min-height: 10vh;
   display: -webkit-box;
@@ -107,7 +108,7 @@ nav {
   padding-top: 0px;
   font-size: 1.2rem;
   position: relative;
-  z-index: 2;
+  z-index: 30;
 }
 
 nav span:last-child {
@@ -504,6 +505,7 @@ nav .library-opened-link {
   color: black;
 }
 
+/* 재생목록 레이어 (z-index: 20 유지) */
 .library {
   max-height: 100vh;
   min-height: 100vh;
