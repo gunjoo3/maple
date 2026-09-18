@@ -39,20 +39,31 @@ const number = document.querySelector(".song-info h5");
 const durationInput = document.querySelector(".player input");
 const currentTime = document.querySelector(".player span");
 
-// OS 잠금화면 / 상단바 미디어 세션 동기화 함수
+// 상대 경로 이미지를 아이폰(iOS) 규격의 절대 경로로 변환
+function getAbsoluteUrl(relativeUrl) {
+  try {
+    return new URL(encodeURI(relativeUrl), window.location.href).href;
+  } catch (e) {
+    return relativeUrl;
+  }
+}
+
+// OS 잠금화면 / 상단바 미디어 세션 동기화
 function updateMediaSession(song) {
   if ("mediaSession" in navigator) {
+    const fullArtworkUrl = getAbsoluteUrl(song.cover);
+
     navigator.mediaSession.metadata = new MediaMetadata({
       title: song.name,
       artist: song.artist,
       album: "메이플스토리 BGM",
       artwork: [
-        { src: song.cover, sizes: "96x96", type: "image/png" },
-        { src: song.cover, sizes: "128x128", type: "image/png" },
-        { src: song.cover, sizes: "192x192", type: "image/png" },
-        { src: song.cover, sizes: "256x256", type: "image/png" },
-        { src: song.cover, sizes: "384x384", type: "image/png" },
-        { src: song.cover, sizes: "512x512", type: "image/png" },
+        { src: fullArtworkUrl, sizes: "96x96", type: "image/png" },
+        { src: fullArtworkUrl, sizes: "128x128", type: "image/png" },
+        { src: fullArtworkUrl, sizes: "192x192", type: "image/png" },
+        { src: fullArtworkUrl, sizes: "256x256", type: "image/png" },
+        { src: fullArtworkUrl, sizes: "384x384", type: "image/png" },
+        { src: fullArtworkUrl, sizes: "512x512", type: "image/png" },
       ],
     });
 
@@ -73,7 +84,7 @@ function updateMediaSession(song) {
   }
 }
 
-// OS 상태바 진행 시간 동기화
+// OS 상태바 진행 시간 실시간 동기화
 function updatePositionState() {
   if ("mediaSession" in navigator && "setPositionState" in navigator.mediaSession) {
     if (audio.duration && !isNaN(audio.duration)) {
@@ -92,11 +103,8 @@ function playSong(song) {
   artist.innerText = song.artist;
   number.innerText = song.number;
   audio.setAttribute("src", song.audio);
-  
-  // 진행 상태바 핸들(Thumb)에 현재 곡 앨범 아트 적용
-  durationInput.style.setProperty("--thumb-img", `url("${encodeURI(song.cover)}")`);
-  
-  // OS 미디어 상태바 연동
+
+  // OS 상태바 메타데이터 갱신
   updateMediaSession(song);
 
   playStatus = false;
@@ -113,13 +121,24 @@ playPauseIcon.addEventListener("click", () => {
 
 function playPause() {
   if (playStatus === false) {
+    // 첫 곡에서 바로 재생 버튼을 눌렀을 때도 현재 선택된 1번 곡을 상태바에 즉시 등록
+    const selectedSongEl = document.querySelector(".library-song.selected");
+    const targetId = selectedSongEl ? selectedSongEl.id : 1;
+    const currentSongData = (typeof songs !== "undefined" && songs.find((s) => s.id == targetId)) || (typeof songs !== "undefined" && songs[0]);
+    
+    if (currentSongData) {
+      updateMediaSession(currentSongData);
+    }
+
     playPauseIcon.className = "fas fa-pause";
-    audio.play();
+    audio.play().then(() => {
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "playing";
+      }
+    }).catch((e) => console.log("재생 오류:", e));
+
     cover.classList.add("playing");
     playStatus = true;
-    if ("mediaSession" in navigator) {
-      navigator.mediaSession.playbackState = "playing";
-    }
   } else {
     playPauseIcon.className = "fa fa-play-circle";
     audio.pause();
@@ -133,9 +152,6 @@ function playPause() {
 
 //* sound volume control
 const volume = document.querySelector(".sound-control input");
-volume.addEventListener("input", () => {
-  audio.volume = volume.value / 100;
-});
 volume.addEventListener("change", () => {
   audio.volume = volume.value / 100;
 });
@@ -158,19 +174,11 @@ audio.addEventListener("loadedmetadata", () => {
 audio.addEventListener("timeupdate", () => {
   durationInput.value = audio.currentTime;
   currentTime.innerText = `${timeFormat(audio.currentTime)}`;
-  
   const gauge = document.querySelector(".player div div");
   if (gauge && audio.duration) {
     gauge.style.left = `${(audio.currentTime / audio.duration) * 100}%`;
   }
-  
-  updatePositionState();
-});
 
-// 진행바 드래그 및 터치 즉각 반영
-durationInput.addEventListener("input", () => {
-  audio.currentTime = durationInput.value;
-  currentTime.innerText = `${timeFormat(durationInput.value)}`;
   updatePositionState();
 });
 
@@ -218,11 +226,11 @@ function skipSong(direction) {
   }
 }
 
-document.querySelector('.btn-menu').addEventListener('click', function(){
-    this.classList.toggle('active');
+document.querySelector(".btn-menu").addEventListener("click", function () {
+  this.classList.toggle("active");
 });
 
-// 첫 곡(1번) 앨범 커버 진행바 및 상태바 초기화
+// 페이지 초기 로드 시 1번 곡 메타데이터 사전 동기화
 if (typeof songs !== "undefined" && songs.length > 0) {
-  durationInput.style.setProperty("--thumb-img", `url("${encodeURI(songs[0].cover)}")`);
+  updateMediaSession(songs[0]);
 }
