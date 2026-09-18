@@ -1,6 +1,6 @@
 const audio = document.querySelector("audio");
-const cover = document.querySelector(".song-info .main-cover");
-const albumGlow = document.querySelector(".song-info .album-glow");
+const cover = document.querySelector(".song-info img");
+const backdropImg = document.getElementById("ambient-backdrop-img");
 const library = document.querySelector(".library");
 
 const libraryLink = document.getElementById("library-link");
@@ -36,6 +36,16 @@ function showToast(msg) {
 }
 window.toast = showToast;
 window.toast2 = showToast;
+
+// 배경 은은한 백드롭 전환 (부드러운 크로스페이드)
+function updateBackdrop(src) {
+  if (!backdropImg) return;
+  backdropImg.style.opacity = "0.2";
+  setTimeout(() => {
+    backdropImg.src = src;
+    backdropImg.style.opacity = "0.6";
+  }, 200);
+}
 
 // IndexedDB 연결
 function getDB() {
@@ -104,7 +114,6 @@ async function setAudioSource(song) {
 if (cover) {
   cover.addEventListener("animationend", () => {
     cover.classList.add("loaded");
-    if (albumGlow) albumGlow.classList.add("loaded");
   }, { once: true });
 }
 
@@ -211,12 +220,12 @@ async function playSong(song, direction = null) {
   number.innerText = song.number;
 
   cover.classList.add("loaded");
-  if (albumGlow) albumGlow.classList.add("loaded");
   localStorage.setItem(STORAGE_KEY, song.id);
 
-  const targetElements = [cover, albumGlow].filter(Boolean);
+  // 상단 은은한 백드롭 색감 업데이트
+  updateBackdrop(song.cover);
 
-  // 사파리 맞춤형 동시 슬라이드 전환
+  // 사파리 WebKit 렌더링 파이프라인 최적화 슬라이드
   if (direction === "forward" || direction === "backward") {
     if (slideTimeout1) clearTimeout(slideTimeout1);
     if (slideTimeout2) clearTimeout(slideTimeout2);
@@ -224,40 +233,34 @@ async function playSong(song, direction = null) {
     const outClass = direction === "forward" ? "slide-out-left" : "slide-out-right";
     const inClass = direction === "forward" ? "slide-in-right" : "slide-in-left";
 
-    // 사파리 디코딩 렉 방지: 비동기 사전 디코딩
+    // 사파리 이미지 디코딩 렉(Stutter) 방지: 비동기 사전 디코딩
     const preloadImg = new Image();
     preloadImg.src = song.cover;
     if (preloadImg.decode) {
       await preloadImg.decode().catch(() => {});
     }
 
-    targetElements.forEach((el) => {
-      el.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
-    });
+    cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
 
     requestAnimationFrame(() => {
-      targetElements.forEach((el) => el.classList.add(outClass));
+      cover.classList.add(outClass);
 
       slideTimeout1 = setTimeout(() => {
-        targetElements.forEach((el) => {
-          el.setAttribute("src", song.cover);
-          el.classList.remove(outClass);
-          el.classList.add(inClass);
-        });
+        cover.setAttribute("src", song.cover);
+        cover.classList.remove(outClass);
+        cover.classList.add(inClass);
 
         slideTimeout2 = setTimeout(() => {
-          targetElements.forEach((el) => el.classList.remove(inClass));
+          cover.classList.remove(inClass);
         }, 220);
       }, 180);
     });
   } else {
-    targetElements.forEach((el) => {
-      el.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
-      el.setAttribute("src", song.cover);
-    });
+    cover.classList.remove("slide-out-left", "slide-in-right", "slide-out-right", "slide-in-left");
+    cover.setAttribute("src", song.cover);
   }
 
-  // 음원 소스 세팅 (IndexedDB 캐시 우선)
+  // 음원 소스 세팅 (IndexedDB 캐시 우선 적용)
   await setAudioSource(song);
 
   updateMediaSession(song);
@@ -291,13 +294,11 @@ function playPause() {
     }).catch((e) => console.log("재생 오류:", e));
 
     cover.classList.add("playing");
-    if (albumGlow) albumGlow.classList.add("playing");
     playStatus = true;
   } else {
     playPauseIcon.className = "fa fa-play-circle";
     audio.pause();
     cover.classList.remove("playing");
-    if (albumGlow) albumGlow.classList.remove("playing");
     playStatus = false;
     if ("mediaSession" in navigator) {
       navigator.mediaSession.playbackState = "paused";
@@ -527,7 +528,7 @@ async function restoreLastPlayedSong() {
   const targetSong = (savedSongId && songs.find((s) => s.id == savedSongId)) || songs[0];
 
   cover.setAttribute("src", targetSong.cover);
-  if (albumGlow) albumGlow.setAttribute("src", targetSong.cover);
+  if (backdropImg) backdropImg.setAttribute("src", targetSong.cover);
   name.innerText = targetSong.name;
   artist.innerText = targetSong.artist;
   number.innerText = targetSong.number;
