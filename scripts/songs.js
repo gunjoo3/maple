@@ -25,7 +25,7 @@ let songs = [
   },
   {
     name: "Ariant: Field",
-    cover: "앨범/samak.jpg",
+    cover: "앨범/25.gif",
     artist: "아리안트 필드",
     audio: "./노래/아리안트 필드.mp3",
     id: 4,
