@@ -92,7 +92,7 @@ body {
   background: linear-gradient(to bottom, rgba(26, 31, 40, 0.15) 0%, rgba(26, 31, 40, 0.72) 60%, #1a1f28 100%);
 }
 
-/* Nav는 재생목록(.library: 20) 아래로 정상적으로 덮이도록 z-index를 낮춤 */
+/* Nav 전체를 재생목록(.library: 20) 위인 z-index 30으로 설정 */
 nav {
   min-height: 10vh;
   display: -webkit-box;
@@ -108,7 +108,22 @@ nav {
   padding-top: 0px;
   font-size: 1.2rem;
   position: relative;
-  z-index: 2;
+  z-index: 30;
+}
+
+/* 재생목록이 열렸을 때 뒤로가기 버튼과 타이틀 문구 숨김 처리 */
+body:has(.library-opened) nav > a:first-child,
+body:has(.library-opened) nav > h4 {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+
+nav a, nav h4 {
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 nav span:last-child {
@@ -438,7 +453,7 @@ nav .library-opened-link {
   text-shadow: 0 0 10px rgba(255, 153, 102, 0.7);
 }
 
-/* 일시정지 아래 실시간 타이머 텍스트 */
+/* 일시정지 바로 아래 실시간 타이머 텍스트 */
 #timer-display {
   text-align: center;
   font-size: 0.78rem;
@@ -846,15 +861,14 @@ nav .library-opened-link {
     transform: translate(-50%, -50%);
 }
 
-/* 최종 CSS: 메뉴 버튼만 재생목록(z-index: 20) 위로 올림 */
+/* 최종 CSS */
 .btn-menu {
   position: relative; 
   float: right; 
   width: 60px; 
   height: 60px; 
   border: 3px -webkit-box-sizing: border-box; 
-  box-sizing: border-box;
-  z-index: 50; 
+  box-sizing: border-box; 
 }
 .btn-menu:before, 
 .btn-menu:after {
