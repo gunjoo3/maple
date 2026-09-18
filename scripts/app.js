@@ -209,7 +209,7 @@ async function playSong(song, direction = null) {
   cover.classList.add("loaded");
   localStorage.setItem(STORAGE_KEY, song.id);
 
-  // 앨범 아트 슬라이드 애니메이션 처리
+  // 앨범 아트 슬라이드 애니메이션 처리 (사파리 디코딩 렉 방지 포함)
   if (direction === "forward" || direction === "backward") {
     if (slideTimeout1) clearTimeout(slideTimeout1);
     if (slideTimeout2) clearTimeout(slideTimeout2);
@@ -219,6 +219,13 @@ async function playSong(song, direction = null) {
 
     const outClass = direction === "forward" ? "slide-out-left" : "slide-out-right";
     const inClass = direction === "forward" ? "slide-in-right" : "slide-in-left";
+
+    // 사파리 이미지 디코딩 렉(Stutter) 방지: 백그라운드 사전 디코딩
+    const preloadImg = new Image();
+    preloadImg.src = song.cover;
+    if (preloadImg.decode) {
+      preloadImg.decode().catch(() => {});
+    }
 
     cover.classList.add(outClass);
 
