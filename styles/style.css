@@ -110,64 +110,109 @@ nav .library-opened-link {
       -ms-flex-pack: space-evenly;
           justify-content: space-evenly;
   overflow: hidden;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
 }
 
-/* 앨범 아트 1:1 정사각형 고정 및 왜곡/밀림 방지 */
+/* 앨범 아트 크기 확대(340px) 및 사파리 GPU 가속 레이어 격리 */
 .song-info img {
-  width: 80%;
-  max-width: 280px;
+  width: 88%;
+  max-width: 340px;
   aspect-ratio: 1 / 1;
   object-fit: contain;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  -webkit-transition: -webkit-transform 0.18s ease-in, opacity 0.18s ease-in;
   transition: transform 0.18s ease-in, opacity 0.18s ease-in;
 }
 
 /* 최초 1회 회전 애니메이션 종료 후 재실행 방지 */
 .song-info img.loaded {
+  -webkit-animation: none;
   animation: none;
 }
 
-/* 슬라이드 아웃 (퇴장) */
+/* 슬라이드 아웃 (사파리 3D 가속 적용) */
 .song-info img.slide-out-left {
-  transform: translateX(-100%);
+  -webkit-transform: translate3d(-100%, 0, 0);
+  transform: translate3d(-100%, 0, 0);
   opacity: 0;
+  -webkit-animation: none;
   animation: none;
 }
 
 .song-info img.slide-out-right {
-  transform: translateX(100%);
+  -webkit-transform: translate3d(100%, 0, 0);
+  transform: translate3d(100%, 0, 0);
   opacity: 0;
+  -webkit-animation: none;
   animation: none;
 }
 
-/* 슬라이드 인 (등장) */
-.song-info img.slide-in-right {
-  animation: slideInRight 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-.song-info img.slide-in-left {
-  animation: slideInLeft 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+/* 슬라이드 인 키프레임 */
+@-webkit-keyframes slideInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInRight {
   from {
-    transform: translateX(100%);
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes slideInLeft {
+  from {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @keyframes slideInLeft {
   from {
-    transform: translateX(-100%);
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
+}
+
+.song-info img.slide-in-right {
+  -webkit-animation: slideInRight 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: slideInRight 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.song-info img.slide-in-left {
+  -webkit-animation: slideInLeft 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: slideInLeft 0.22s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 .song-info h2 {
@@ -317,7 +362,7 @@ nav .library-opened-link {
   text-shadow: 0 0 10px rgba(255, 153, 102, 0.7);
 }
 
-/* 일시정지 아래 실시간 타이머 텍스트 스타일 */
+/* 일시정지 아래 실시간 타이머 텍스트 */
 #timer-display {
   text-align: center;
   font-size: 0.78rem;
