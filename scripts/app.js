@@ -17,7 +17,19 @@ const STORAGE_KEY = "maple_last_song_id";
 const DB_NAME = "MapleAudioCacheDB";
 const DB_VERSION = 1;
 const STORE_NAME = "audioStore";
-let currentBlobUrl = null; // 메모리 관리를 위한 현재 Blob URL
+let currentBlobUrl = null;
+
+// 토스트 메시지 출력 함수
+function showToast(msg) {
+  const toastEl = document.getElementById("toast");
+  if (!toastEl) return;
+  toastEl.innerText = msg;
+  toastEl.classList.add("reveal");
+  setTimeout(() => {
+    toastEl.classList.remove("reveal");
+  }, 2000);
+}
+window.toast = window.toast || showToast;
 
 // IndexedDB 연결
 function getDB() {
@@ -65,9 +77,8 @@ async function cacheAudio(id, url) {
   }
 }
 
-// 음원 소스 세팅 (캐시가 있으면 Blob URL로 즉시 세팅, 없으면 원본 주소로 세팅 후 캐싱)
+// 음원 소스 세팅
 async function setAudioSource(song) {
-  // 이전 할당된 메모리 해제
   if (currentBlobUrl) {
     URL.revokeObjectURL(currentBlobUrl);
     currentBlobUrl = null;
@@ -79,12 +90,11 @@ async function setAudioSource(song) {
     audio.src = currentBlobUrl;
   } else {
     audio.src = song.audio;
-    // 백그라운드 비동기 캐싱 진행 (재생 차단 방지)
     cacheAudio(song.id, song.audio);
   }
 }
 
-// 첫 진입 시의 회전 애니메이션이 1회 끝나면 .loaded 클래스를 붙여 재실행 방지
+// 최초 1회 회전 애니메이션 종료 후 재실행 방지
 cover.addEventListener("animationend", () => {
   cover.classList.add("loaded");
 }, { once: true });
@@ -122,7 +132,7 @@ const number = document.querySelector(".song-info h5");
 const durationInput = document.querySelector(".player input");
 const currentTime = document.querySelector(".player span");
 
-// 상대 경로 이미지를 아이폰(iOS) 규격의 절대 경로로 변환
+// 상대 경로 이미지를 절대 경로로 변환
 function getAbsoluteUrl(relativeUrl) {
   try {
     return new URL(encodeURI(relativeUrl), window.location.href).href;
@@ -215,7 +225,7 @@ async function playSong(song, direction = null) {
     cover.setAttribute("src", song.cover);
   }
 
-  // 로컬 DB에서 캐시된 음원 로딩 (캐시가 없을 시 원본 로드 후 자동 캐싱)
+  // 음원 소스 로드 (IndexedDB 캐시 우선 적용)
   await setAudioSource(song);
 
   updateMediaSession(song);
@@ -307,11 +317,30 @@ audio.addEventListener("ended", () => skipSong("forward"));
 
 function skipSong(direction) {
   const selectedSong = document.querySelector(".selected");
-  selectedSongIndex = librarySongs.indexOf(selectedSong);
+  const selectedSongIndex = librarySongs.indexOf(selectedSong);
 
   selectedSong.classList.remove("selected");
+
+  // 셔플 활성화 상태에서 '다음 곡' 또는 '곡 자동 종료' 시 랜덤 재생
+  if (direction === "forward" && isShuffle && typeof songs !== "undefined" && songs.length > 1) {
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * librarySongs.length);
+    } while (randomIndex === selectedSongIndex);
+
+    const randomSongEl = librarySongs[randomIndex];
+    randomSongEl.classList.add("selected");
+
+    const targetSong = songs.find((s) => s.id == randomSongEl.id);
+    if (targetSong) {
+      playSong(targetSong, "forward");
+    }
+    return;
+  }
+
+  // 순차 재생
   if (direction === "backward") {
-    previousSong = librarySongs[selectedSongIndex - 1];
+    let previousSong = librarySongs[selectedSongIndex - 1];
     if (librarySongs.indexOf(previousSong) === -1) {
       previousSong = librarySongs[librarySongs.length - 1];
     }
@@ -322,8 +351,7 @@ function skipSong(direction) {
       }
     });
   } else if (direction === "forward") {
-    nextSong = librarySongs[selectedSongIndex + 1];
-
+    let nextSong = librarySongs[selectedSongIndex + 1];
     if (librarySongs.indexOf(nextSong) === -1) {
       nextSong = librarySongs[0];
     }
@@ -334,6 +362,53 @@ function skipSong(direction) {
       }
     });
   }
+}
+
+//* 셔플(랜덤 재생) 설정
+let isShuffle = false;
+const shuffleBtn = document.getElementById("shuffle-btn");
+
+if (shuffleBtn) {
+  shuffleBtn.addEventListener("click", () => {
+    isShuffle = !isShuffle;
+    shuffleBtn.classList.toggle("active", isShuffle);
+    showToast(isShuffle ? "셔플 재생 ON" : "셔플 재생 OFF");
+  });
+}
+
+//* 실행 타이머 설정 (15분 -> 30분 -> 60분 -> 해제 순환)
+let timerIndex = 0;
+const timerOptions = [0, 15, 30, 60];
+let timerTimeout = null;
+const timerBtn = document.getElementById("timer-btn");
+
+if (timerBtn) {
+  timerBtn.addEventListener("click", () => {
+    timerIndex = (timerIndex + 1) % timerOptions.length;
+    const minutes = timerOptions[timerIndex];
+
+    if (timerTimeout) {
+      clearTimeout(timerTimeout);
+      timerTimeout = null;
+    }
+
+    if (minutes > 0) {
+      timerBtn.classList.add("active");
+      showToast(`타이머: ${minutes}분 후 자동 종료`);
+
+      timerTimeout = setTimeout(() => {
+        if (playStatus) {
+          playPause();
+        }
+        timerIndex = 0;
+        timerBtn.classList.remove("active");
+        showToast("타이머가 완료되어 재생을 정지합니다");
+      }, minutes * 60 * 1000);
+    } else {
+      timerBtn.classList.remove("active");
+      showToast("타이머 해제");
+    }
+  });
 }
 
 document.querySelector(".btn-menu").addEventListener("click", function () {
@@ -352,7 +427,6 @@ async function restoreLastPlayedSong() {
   artist.innerText = targetSong.artist;
   number.innerText = targetSong.number;
 
-  // 캐시된 음원 복원 및 세팅
   await setAudioSource(targetSong);
 
   librarySongs.forEach((songEl) => {
