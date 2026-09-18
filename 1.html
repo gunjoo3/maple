@@ -31,9 +31,6 @@
     <link rel="manifest" href="/manifest.json" />
   </head>
   <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false" style="overflow: hidden;" onload="toast2(' ▶ 를 터치해\n음악을 재생하세요')">
-    <!-- 앨범 자켓 연동 은은한 배경 효과 레이어 -->
-    <div class="ambient-bg" id="ambient-bg"></div>
-
     <div class="app">
       <h9 style="color:white; position:fixed; bottom : 5px; right:0; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; font-size:10px; z-index:100;">powered by kgj😊&nbsp;&nbsp;</h9>
       <h8 id="toast2"></h8>
@@ -43,10 +40,20 @@
         <a href="javascript:;" class="btn-menu" id="library-link" style="z-index:1;" onclick="toast('↕ 위 아래로 스크롤')"></a>
       </nav>
       <div class="song-info">
-        <img
-          src="앨범/100.gif"
-          alt=""
-        />
+        <!-- 앨범 자켓 및 후면 백라이트 컨테이너 -->
+        <div class="cover-box">
+          <img
+            class="main-cover"
+            src="앨범/100.gif"
+            alt=""
+          />
+          <img
+            class="album-glow"
+            src="앨범/100.gif"
+            alt=""
+            aria-hidden="true"
+          />
+        </div>
         <div>
           <h2>Elin Forest</h2>
           <h3>엘린숲</h3>
