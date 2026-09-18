@@ -19,6 +19,8 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   position: relative;
+  /* 사파리 더블 탭 확대 지연 방지 및 터치 최적화 */
+  touch-action: manipulation;
 }
 
 @media screen and (max-width: 2000px) {
