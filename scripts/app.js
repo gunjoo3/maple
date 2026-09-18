@@ -113,7 +113,6 @@ function openLibrary() {
   } else {
     library.classList.add("library-opened");
     libraryLink.classList.add("library-opened-link");
-    // 서랍 열릴 때 현재 곡으로 자동 스크롤
     const currentSelected = document.querySelector(".library-song.selected");
     if (currentSelected) {
       currentSelected.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -326,7 +325,6 @@ const shuffleBtn = document.getElementById("shuffle-btn");
 
 function buildShuffleQueue(currentId) {
   const pool = songs.map((s) => s.id).filter((id) => id != currentId);
-  // Fisher-Yates 알고리즘
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -358,36 +356,70 @@ if (shuffleBtn) {
   });
 }
 
-//* 실행 타이머 설정 (15분 -> 30분 -> 60분 -> 해제 순환)
+//* 실행 타이머 설정 (실시간 카운트다운 MM:SS 표시)
 let timerIndex = 0;
 const timerOptions = [0, 15, 30, 60];
-let timerTimeout = null;
+let timerInterval = null;
+let remainingSeconds = 0;
 const timerBtn = document.getElementById("timer-btn");
+const timerDisplay = document.getElementById("timer-display");
+
+function formatTimer(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s < 10 ? "0" : ""}${s}`;
+}
+
+function clearTimerState() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  timerIndex = 0;
+  remainingSeconds = 0;
+  if (timerBtn) timerBtn.classList.remove("active");
+  if (timerDisplay) {
+    timerDisplay.classList.remove("active");
+    timerDisplay.innerText = "";
+  }
+}
 
 if (timerBtn) {
   timerBtn.addEventListener("click", () => {
     timerIndex = (timerIndex + 1) % timerOptions.length;
     const minutes = timerOptions[timerIndex];
 
-    if (timerTimeout) {
-      clearTimeout(timerTimeout);
-      timerTimeout = null;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
     }
 
     if (minutes > 0) {
+      remainingSeconds = minutes * 60;
       timerBtn.classList.add("active");
+      
+      if (timerDisplay) {
+        timerDisplay.innerText = formatTimer(remainingSeconds);
+        timerDisplay.classList.add("active");
+      }
       showToast(`타이머: ${minutes}분 후 자동 종료`);
 
-      timerTimeout = setTimeout(() => {
-        if (playStatus) {
-          playPause();
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        if (remainingSeconds <= 0) {
+          clearTimerState();
+          if (playStatus) {
+            playPause();
+          }
+          showToast("타이머가 완료되어 재생을 정지합니다");
+        } else {
+          if (timerDisplay) {
+            timerDisplay.innerText = formatTimer(remainingSeconds);
+          }
         }
-        timerIndex = 0;
-        timerBtn.classList.remove("active");
-        showToast("타이머가 완료되어 재생을 정지합니다");
-      }, minutes * 60 * 1000);
+      }, 1000);
     } else {
-      timerBtn.classList.remove("active");
+      clearTimerState();
       showToast("타이머 해제");
     }
   });
@@ -402,11 +434,10 @@ forward.addEventListener("click", () => skipSong("forward"));
 audio.addEventListener("ended", () => skipSong("forward"));
 
 function skipSong(direction) {
-  const selectedSong = document.querySelector(".library-song.selected");
+  const selectedSong = document.querySelector(".selected");
   const selectedSongIndex = librarySongs.indexOf(selectedSong);
   const currentId = selectedSong ? selectedSong.id : (songs[0] && songs[0].id);
 
-  // 셔플이 활성화된 상태에서 '다음 곡' 또는 '곡 종료 후 자동 넘김'
   if (direction === "forward" && isShuffle && typeof songs !== "undefined" && songs.length > 1) {
     if (shuffleQueue.length === 0) {
       shuffleQueue = buildShuffleQueue(currentId);
@@ -418,7 +449,6 @@ function skipSong(direction) {
     librarySongs.forEach((s) => s.classList.remove("selected"));
     if (nextSongEl) {
       nextSongEl.classList.add("selected");
-      // 재생목록 스크롤 자동 동기화
       nextSongEl.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
@@ -429,7 +459,6 @@ function skipSong(direction) {
     return;
   }
 
-  // 일반 순차 재생
   librarySongs.forEach((s) => s.classList.remove("selected"));
 
   if (direction === "backward") {
