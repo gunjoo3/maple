@@ -92,7 +92,7 @@ body {
   background: linear-gradient(to bottom, rgba(26, 31, 40, 0.15) 0%, rgba(26, 31, 40, 0.72) 60%, #1a1f28 100%);
 }
 
-/* 재생목록(.library: 20)보다 위에 배치하여 버튼이 덮이지 않도록 z-index 30 적용 */
+/* Nav는 재생목록(.library: 20) 아래로 정상적으로 덮이도록 z-index를 낮춤 */
 nav {
   min-height: 10vh;
   display: -webkit-box;
@@ -108,7 +108,7 @@ nav {
   padding-top: 0px;
   font-size: 1.2rem;
   position: relative;
-  z-index: 30;
+  z-index: 2;
 }
 
 nav span:last-child {
@@ -505,7 +505,7 @@ nav .library-opened-link {
   color: black;
 }
 
-/* 재생목록 레이어 (z-index: 20 유지) */
+/* 재생목록 레이어 (z-index: 20) */
 .library {
   max-height: 100vh;
   min-height: 100vh;
@@ -846,14 +846,15 @@ nav .library-opened-link {
     transform: translate(-50%, -50%);
 }
 
-/* 최종 CSS */
+/* 최종 CSS: 메뉴 버튼만 재생목록(z-index: 20) 위로 올림 */
 .btn-menu {
-  position:relative; 
-  float:right; 
-  width:60px; 
-  height:60px; 
-  border:3px -webkit-box-sizing:border-box; 
-  box-sizing:border-box; 
+  position: relative; 
+  float: right; 
+  width: 60px; 
+  height: 60px; 
+  border: 3px -webkit-box-sizing: border-box; 
+  box-sizing: border-box;
+  z-index: 50; 
 }
 .btn-menu:before, 
 .btn-menu:after {
