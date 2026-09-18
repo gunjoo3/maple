@@ -117,15 +117,22 @@ nav .library-opened-link {
   transition: transform 0.18s ease-in, opacity 0.18s ease-in;
 }
 
+/* 최초 1회 회전 애니메이션 종료 후 재실행 방지 */
+.song-info img.loaded {
+  animation: none;
+}
+
 /* 슬라이드 아웃 (퇴장) */
 .song-info img.slide-out-left {
   transform: translateX(-100%);
   opacity: 0;
+  animation: none;
 }
 
 .song-info img.slide-out-right {
   transform: translateX(100%);
   opacity: 0;
+  animation: none;
 }
 
 /* 슬라이드 인 (등장) */
