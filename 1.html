@@ -42,7 +42,8 @@
       <nav>
         <a href="javascript:history.back();"><button class="mdc-icon-button material-icons">arrow_back</button></a>
         <h4>메이플스토리 BGM</h4>
-        <a href="javascript:;" class="btn-menu" id="library-link" style="z-index:1;" onclick="toast('↕ 위 아래로 스크롤')"></a>
+        <!-- 재생목록 창(z-index: 20) 위로 올라오도록 z-index 수정 -->
+        <a href="javascript:;" class="btn-menu" id="library-link" style="z-index:30;" onclick="toast('↕ 위 아래로 스크롤')"></a>
       </nav>
       <div class="song-info">
         <img
