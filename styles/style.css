@@ -175,7 +175,7 @@ nav .library-opened-link {
   margin: auto;
 }
 
-.player > div {
+.player div {
   width: 100%;
   position: relative;
   display: -webkit-box;
@@ -188,8 +188,7 @@ nav .library-opened-link {
       -ms-flex-pack: center;
           justify-content: center;
   border-radius: 8px;
-  overflow: visible;
-  height: 28px;
+  overflow: hidden;
 }
 
 .player div div {
@@ -198,70 +197,34 @@ nav .library-opened-link {
   background-color: #adcaf2;
   border-radius: 8px;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
   left: 0;
   pointer-events: none;
 }
 
 .player input {
   width: 100%;
-  height: 4px;
+  max-height: 3px;
   cursor: pointer;
   -webkit-appearance: none;
   border-radius: 8px;
   -moz-appearance: none;
        appearance: none;
   outline: none;
-  background: #323846;
-  z-index: 1;
+  background: #ff9966;
+  z-index: 0;
   -webkit-transition: width 0.2s ease;
   transition: width 0.2s ease;
 }
 
-/* 진행 바 핸들(Thumb)에 실시간 앨범 커버 연동 */
 .player input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 26px;
-  height: 26px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  border: 2px solid #ffffff;
-  background-color: #1a1f28;
-  background-image: var(--thumb-img, none);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  background: #ff9966;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.2s ease;
-}
-
-.player input::-webkit-slider-thumb:hover,
-.player input::-webkit-slider-thumb:active {
-  transform: scale(1.15);
-  border-color: #adcaf2;
-}
-
-.player input::-moz-range-thumb {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  background-color: #1a1f28;
-  background-image: var(--thumb-img, none);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.2s ease;
-}
-
-.player input::-moz-range-thumb:hover,
-.player input::-moz-range-thumb:active {
-  transform: scale(1.15);
-  border-color: #adcaf2;
 }
 
 .player span {
@@ -672,6 +635,9 @@ nav .library-opened-link {
     transform: translate(-50%, -50%)
 }
 
+
+
+
 /* 최종 CSS */
 .btn-menu {position:relative; float:right; width:60px; height:60px; border:3px -webkit-box-sizing:border-box; box-sizing:border-box; }
 .btn-menu:before, 
@@ -681,7 +647,10 @@ nav .library-opened-link {
 .btn-menu.active:before {margin-top:-2px; -webkit-transform:translateX(-50%) rotate(45deg) translateZ(0); transform:translateX(-50%) rotate(45deg) translateZ(0);}
 .btn-menu.active:after {margin-top:-2px; -webkit-transform:translateX(-50%) rotate(-45deg) translateZ(0); transform:translateX(-50%) rotate(-45deg) translateZ(0);}
 
+
+
 /*애니메이션*/
+
 .material-icons {
 color: #adcaf2;
 animation-name: re2;
@@ -692,9 +661,10 @@ animation-direction: alternate;
 @keyframes re2 {
 0% {transform: translateY(-20em);}
 to {transform: translate(0);}
+
 }
 
-.btn-menu{
+ .btn-menu{
 animation-name: re1;
 animation-duration: 1.7s;
 animation-direction: alternate;
@@ -703,8 +673,8 @@ animation-direction: alternate;
 @keyframes re1 {
 0% {transform: translateY(-50em);}
 to {transform: translate(0);}
-}
 
+}
 h2 {
 animation-name: re3;
 animation-duration: 1.7s;
@@ -714,8 +684,8 @@ animation-direction: alternate;
 @keyframes re3 {
 0% {transform: translateX(-50em);}
 to {transform: translate(0);}
-}
 
+}
 h3 {
 animation-name: re4;
 animation-duration: 1.7s;
@@ -725,6 +695,7 @@ animation-direction: alternate;
 @keyframes re4 {
 0% {transform: translateX(50em);}
 to {transform: translate(0);}
+
 }
 
 img{
@@ -736,13 +707,13 @@ animation-direction: alternate;
     from {
         opacity: 0;
         transform: scale(0) rotate(135deg);
+   
     }
     to {
         opacity: 1;
         transform: scale(1) rotate(0deg);
     }
 }
-
 .player {
 animation-name: re5;
 animation-duration: 1.7s;
@@ -752,8 +723,8 @@ animation-direction: alternate;
 @keyframes re5 {
 0% {transform: translateY(50em);}
 to {transform: translate(0);}
-}
 
+}
 .fa-backward {
 animation-name: r1;
 animation-duration: 1.7s;
@@ -763,8 +734,8 @@ animation-direction: alternate;
 @keyframes r1 {
 0% {transform: translateY(30em);}
 to {transform: translate(0);}
-}
 
+}
 .fa-play {
 animation-name: r2;
 animation-duration: 1.7s;
@@ -774,8 +745,8 @@ animation-direction: alternate;
 @keyframes r2 {
 0% {transform: translateY(40em);}
 to {transform: translate(0);}
-}
 
+}
 .fa-forward{
 animation-name: r3;
 animation-duration: 1.7s;
@@ -785,6 +756,7 @@ animation-direction: alternate;
 @keyframes r3 {
 0% {transform: translateY(50em);}
 to {transform: translate(0);}
+
 }
 
 .sound-control{
@@ -796,6 +768,7 @@ animation-direction: alternate;
 @keyframes r4 {
 0% {transform: translateY(50em);}
 to {transform: translate(0);}
+
 }
 
 .sticky {
@@ -803,6 +776,7 @@ to {transform: translate(0);}
   position: sticky;
   top : 22px; 
   left:10px;
+
 }
 
 h9{
@@ -814,6 +788,7 @@ animation-direction: alternate;
 @keyframes r5 {
 0% {transform: translateY(50em);}
 to {transform: translate(0);}
+
 }
 
 sup{
@@ -834,6 +809,7 @@ sup{
     100% {color:rgb(156, 156, 0);}
 }
 
+
 .fa-play-circle{
 	-webkit-animation:blink .8s ease-in-out infinite alternate;
     -moz-animation:blink .8s ease-in-out infinite alternate;
@@ -851,6 +827,7 @@ sup{
     0% {opacity:0;}
     100% {opacity:1;}
 }
+
 
 h4{
 color: #adcaf2;
@@ -876,3 +853,5 @@ opacity: 0.5;
 0% {transform: translateY(30em);opacity: 1;}
 to {transform: translate(0);opacity: 0.5;}
 }
+
+
