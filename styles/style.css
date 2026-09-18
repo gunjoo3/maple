@@ -109,11 +109,15 @@ nav .library-opened-link {
   -webkit-box-pack: space-evenly;
       -ms-flex-pack: space-evenly;
           justify-content: space-evenly;
-  overflow: hidden; /* 슬라이드 애니메이션 시 좌우 넘침 방지 */
+  overflow: hidden;
 }
 
+/* 앨범 아트 1:1 정사각형 고정 및 왜곡/밀림 방지 */
 .song-info img {
-  width: 90%;
+  width: 80%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
   transition: transform 0.18s ease-in, opacity 0.18s ease-in;
 }
 
