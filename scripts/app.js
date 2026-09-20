@@ -13,6 +13,7 @@ let slideTimeout2 = null;
 
 // 로컬 스토리지 키
 const STORAGE_KEY = "maple_last_song_id";
+const SHUFFLE_STORAGE_KEY = "maple_shuffle_state";
 
 // IndexedDB 설정
 const DB_NAME = "MapleAudioCacheDB";
@@ -375,7 +376,7 @@ durationInput.addEventListener("change", () => {
   updatePositionState();
 });
 
-//* 셔플(중복 없는 덱 셔플) 큐 관리
+//* 셔플(중복 없는 덱 셔플) 큐 관리 및 상태 저장
 let isShuffle = false;
 let shuffleQueue = [];
 const shuffleBtn = document.getElementById("shuffle-btn");
@@ -396,10 +397,12 @@ function removeFromShuffleQueue(id) {
   }
 }
 
+// 셔플 버튼 클릭 시 상태 토글 및 localStorage 저장
 if (shuffleBtn) {
   shuffleBtn.addEventListener("click", () => {
     isShuffle = !isShuffle;
     shuffleBtn.classList.toggle("active", isShuffle);
+    localStorage.setItem(SHUFFLE_STORAGE_KEY, isShuffle ? "true" : "false");
 
     if (isShuffle) {
       const selectedSong = document.querySelector(".library-song.selected");
@@ -413,73 +416,18 @@ if (shuffleBtn) {
   });
 }
 
-//* 실행 타이머 설정 (실시간 카운트다운 MM:SS 표시)
-let timerIndex = 0;
-const timerOptions = [0, 15, 30, 60];
-let timerInterval = null;
-let remainingSeconds = 0;
-const timerBtn = document.getElementById("timer-btn");
-const timerDisplay = document.getElementById("timer-display");
-
-function formatTimer(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}:${s < 10 ? "0" : ""}${s}`;
-}
-
-function clearTimerState() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
+// 저장된 셔플 상태 복원
+function restoreShuffleState(currentSongId) {
+  const savedShuffle = localStorage.getItem(SHUFFLE_STORAGE_KEY);
+  if (savedShuffle === "true") {
+    isShuffle = true;
+    if (shuffleBtn) shuffleBtn.classList.add("active");
+    shuffleQueue = buildShuffleQueue(currentSongId);
+  } else {
+    isShuffle = false;
+    if (shuffleBtn) shuffleBtn.classList.remove("active");
+    shuffleQueue = [];
   }
-  timerIndex = 0;
-  remainingSeconds = 0;
-  if (timerBtn) timerBtn.classList.remove("active");
-  if (timerDisplay) {
-    timerDisplay.classList.remove("active");
-    timerDisplay.innerText = "";
-  }
-}
-
-if (timerBtn) {
-  timerBtn.addEventListener("click", () => {
-    timerIndex = (timerIndex + 1) % timerOptions.length;
-    const minutes = timerOptions[timerIndex];
-
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-
-    if (minutes > 0) {
-      remainingSeconds = minutes * 60;
-      timerBtn.classList.add("active");
-      
-      if (timerDisplay) {
-        timerDisplay.innerText = formatTimer(remainingSeconds);
-        timerDisplay.classList.add("active");
-      }
-      showToast(`타이머: ${minutes}분 후 자동 종료`);
-
-      timerInterval = setInterval(() => {
-        remainingSeconds--;
-        if (remainingSeconds <= 0) {
-          clearTimerState();
-          if (playStatus) {
-            playPause();
-          }
-          showToast("타이머가 완료되어 재생을 정지합니다");
-        } else {
-          if (timerDisplay) {
-            timerDisplay.innerText = formatTimer(remainingSeconds);
-          }
-        }
-      }, 1000);
-    } else {
-      clearTimerState();
-      showToast("타이머 해제");
-    }
-  });
 }
 
 //*skipping back/forward
@@ -557,7 +505,7 @@ if (menuBtn) {
   });
 }
 
-// 마지막 재생 곡 복원 함수
+// 마지막 재생 곡 및 셔플 상태 복원 함수
 async function restoreLastPlayedSong() {
   if (typeof songs === "undefined" || songs.length === 0) return;
 
@@ -572,6 +520,9 @@ async function restoreLastPlayedSong() {
 
   // 최초 접속 시 isInitial = true 전달 (re3 애니메이션 실행 대기)
   updateTitleMarquee(true);
+
+  // 셔플 상태 복원
+  restoreShuffleState(targetSong.id);
 
   await setAudioSource(targetSong);
 
@@ -588,5 +539,5 @@ async function restoreLastPlayedSong() {
 // 창 크기가 조절될 때 제목 marquee 상태 재계산
 window.addEventListener("resize", () => updateTitleMarquee(false));
 
-// 페이지 진입 시 마지막 곡 즉시 복원
+// 페이지 진입 시 마지막 곡 및 셔플 상태 즉시 복원
 restoreLastPlayedSong();
