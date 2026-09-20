@@ -305,6 +305,16 @@ nav .library-opened-link {
   animation: slideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* 곡 제목 영역 컨테이너 (고정 너비 & 영역 이탈 숨김) */
+.song-info > div {
+  width: 85%;
+  max-width: 340px;
+  overflow: hidden;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* h2 제목 기본 스타일: 짧은 경우 정중앙 고정 */
 .song-info h2 {
   color: transparent;
   background-image: -webkit-gradient(linear, left top, right top, from(#ff9966), to(#ff5e62));
@@ -312,16 +322,48 @@ nav .library-opened-link {
   -webkit-background-clip: text;
   background-clip: text;
   margin-bottom: 0.5rem;
-}
-
-.song-info h2,
-.song-info h3 {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
   font-weight: 400;
   text-align: center;
 }
 
+/* h2 제목 클래스 .marquee: 영역보다 긴 제목일 때만 좌우 흐름 애니메이션 작동 */
+.song-info h2.marquee {
+  max-width: none;
+  padding-left: 100%;
+  -webkit-animation: marquee 10s linear infinite;
+  animation: marquee 10s linear infinite;
+}
+
 .song-info h3 {
+  font-weight: 400;
+  text-align: center;
   font-size: 0.8rem;
+}
+
+/* h2 좌우 흐름(Marquee) 애니메이션 키프레임 */
+@-webkit-keyframes marquee {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
 }
 
 @-webkit-keyframes playRotate {
@@ -543,6 +585,11 @@ nav .library-opened-link {
 
 .library h2 {
   margin: 1rem 0.5rem;
+  display: block;
+  padding-left: 0;
+  white-space: normal;
+  -webkit-animation: none;
+  animation: none;
 }
 
 .library .add-song {
@@ -923,17 +970,6 @@ nav .library-opened-link {
  
 @keyframes re1 {
   0% {transform: translateY(-50em);}
-  to {transform: translate(0);}
-}
-
-h2 {
-  animation-name: re3;
-  animation-duration: 1.7s;
-  animation-direction: alternate;
-}
- 
-@keyframes re3 {
-  0% {transform: translateX(-50em);}
   to {transform: translate(0);}
 }
 
