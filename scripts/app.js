@@ -156,6 +156,21 @@ const number = document.querySelector(".song-info h5");
 const durationInput = document.querySelector(".player input");
 const currentTime = document.querySelector(".player span");
 
+// 제목 길이가 영역보다 길 경우에만 흐름 애니메이션(Marquee) 적용
+function updateTitleMarquee() {
+  if (!name || !name.parentElement) return;
+
+  name.classList.remove("marquee");
+  name.style.animation = "none";
+  void name.offsetWidth; // Reflow 트리거로 애니메이션 초기화
+
+  // 제목의 실제 넓이가 부모 컨테이너 너비보다 큰 경우에만 .marquee 클래스 추가
+  if (name.scrollWidth > name.parentElement.clientWidth) {
+    name.classList.add("marquee");
+    name.style.animation = "";
+  }
+}
+
 // 상대 경로 이미지를 절대 경로로 변환
 function getAbsoluteUrl(relativeUrl) {
   try {
@@ -218,6 +233,9 @@ async function playSong(song, direction = null) {
   name.innerText = song.name;
   artist.innerText = song.artist;
   number.innerText = song.number;
+
+  // 제목 길이에 따라 Marquee 효과 여부 자동 판단
+  updateTitleMarquee();
 
   cover.classList.add("loaded");
   localStorage.setItem(STORAGE_KEY, song.id);
@@ -539,6 +557,8 @@ async function restoreLastPlayedSong() {
   artist.innerText = targetSong.artist;
   number.innerText = targetSong.number;
 
+  updateTitleMarquee();
+
   await setAudioSource(targetSong);
 
   librarySongs.forEach((songEl) => {
@@ -550,6 +570,9 @@ async function restoreLastPlayedSong() {
 
   updateMediaSession(targetSong);
 }
+
+// 창 크기가 조절될 때 제목 marquee 상태 재계산
+window.addEventListener("resize", updateTitleMarquee);
 
 // 페이지 진입 시 마지막 곡 즉시 복원
 restoreLastPlayedSong();
