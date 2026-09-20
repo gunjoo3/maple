@@ -156,18 +156,31 @@ const number = document.querySelector(".song-info h5");
 const durationInput = document.querySelector(".player input");
 const currentTime = document.querySelector(".player span");
 
-// 제목 길이가 영역보다 길 경우에만 흐름 애니메이션(Marquee) 적용
-function updateTitleMarquee() {
+// 제목 긴 경우에만 왕복 슬라이드 애니메이션 실행
+let marqueeTimeout = null;
+
+function updateTitleMarquee(isInitial = false) {
   if (!name || !name.parentElement) return;
 
-  name.classList.remove("marquee");
-  name.style.animation = "none";
-  void name.offsetWidth; // Reflow 트리거로 애니메이션 초기화
+  if (marqueeTimeout) {
+    clearTimeout(marqueeTimeout);
+    marqueeTimeout = null;
+  }
 
-  // 제목의 실제 넓이가 부모 컨테이너 너비보다 큰 경우에만 .marquee 클래스 추가
-  if (name.scrollWidth > name.parentElement.clientWidth) {
-    name.classList.add("marquee");
-    name.style.animation = "";
+  name.classList.remove("marquee");
+  name.style.removeProperty("--marquee-dist");
+
+  // 넘치는 거리 계산
+  const overflowDist = name.scrollWidth - name.parentElement.clientWidth;
+
+  if (overflowDist > 5) {
+    name.style.setProperty("--marquee-dist", `${overflowDist + 15}px`);
+    
+    // 초기 로딩 시 1.7초(re3 진입 애니메이션)가 끝난 후 왕복 애니메이션 시작
+    const delay = isInitial ? 1700 : 300;
+    marqueeTimeout = setTimeout(() => {
+      name.classList.add("marquee");
+    }, delay);
   }
 }
 
@@ -234,8 +247,8 @@ async function playSong(song, direction = null) {
   artist.innerText = song.artist;
   number.innerText = song.number;
 
-  // 제목 길이에 따라 Marquee 효과 여부 자동 판단
-  updateTitleMarquee();
+  // 제목 길이에 따른 왕복 애니메이션 적용
+  updateTitleMarquee(false);
 
   cover.classList.add("loaded");
   localStorage.setItem(STORAGE_KEY, song.id);
@@ -557,7 +570,8 @@ async function restoreLastPlayedSong() {
   artist.innerText = targetSong.artist;
   number.innerText = targetSong.number;
 
-  updateTitleMarquee();
+  // 최초 접속 시 isInitial = true 전달 (re3 애니메이션 실행 대기)
+  updateTitleMarquee(true);
 
   await setAudioSource(targetSong);
 
@@ -572,7 +586,7 @@ async function restoreLastPlayedSong() {
 }
 
 // 창 크기가 조절될 때 제목 marquee 상태 재계산
-window.addEventListener("resize", updateTitleMarquee);
+window.addEventListener("resize", () => updateTitleMarquee(false));
 
 // 페이지 진입 시 마지막 곡 즉시 복원
 restoreLastPlayedSong();
