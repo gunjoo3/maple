@@ -430,6 +430,77 @@ function restoreShuffleState(currentSongId) {
   }
 }
 
+//* ===================================================
+//* 타이머 기능 (OFF -> 15분 -> 30분 -> 45분 -> 60분 -> OFF)
+//* ===================================================
+const timerBtn = document.getElementById("timer-btn");
+const timerDisplay = document.getElementById("timer-display");
+let timerInterval = null;
+let timerRemainingSeconds = 0;
+const timerOptions = [0, 15, 30, 45, 60]; // 분 단위 목록
+let timerOptionIndex = 0;
+
+function formatTimerDisplay(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  timerOptionIndex = 0;
+  timerRemainingSeconds = 0;
+  if (timerBtn) timerBtn.classList.remove("active");
+  if (timerDisplay) {
+    timerDisplay.classList.remove("active");
+    timerDisplay.innerText = "";
+  }
+}
+
+if (timerBtn) {
+  timerBtn.addEventListener("click", () => {
+    // 옵션 순환 (0 -> 15 -> 30 -> 45 -> 60 -> 0)
+    timerOptionIndex = (timerOptionIndex + 1) % timerOptions.length;
+    const minutes = timerOptions[timerOptionIndex];
+
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    if (minutes === 0) {
+      stopTimer();
+      showToast("타이머 OFF");
+    } else {
+      timerRemainingSeconds = minutes * 60;
+      timerBtn.classList.add("active");
+      if (timerDisplay) {
+        timerDisplay.classList.add("active");
+        timerDisplay.innerText = `남은 시간 ${formatTimerDisplay(timerRemainingSeconds)}`;
+      }
+      showToast(`${minutes}분 후 종료`);
+
+      timerInterval = setInterval(() => {
+        timerRemainingSeconds--;
+        if (timerDisplay) {
+          timerDisplay.innerText = `남은 시간 ${formatTimerDisplay(timerRemainingSeconds)}`;
+        }
+
+        if (timerRemainingSeconds <= 0) {
+          stopTimer();
+          if (playStatus) {
+            playPause();
+          }
+          showToast("타이머가 완료되어 재생이 정지되었습니다.");
+        }
+      }, 1000);
+    }
+  });
+}
+
 //*skipping back/forward
 const back = document.getElementById("backward");
 const forward = document.getElementById("forward");
